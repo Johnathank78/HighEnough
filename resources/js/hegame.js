@@ -8,6 +8,14 @@ function highEnough(){
     const platform = "Web"
     var current_page = "landing"
 
+    function setFullHeight() {
+        let viewportHeight = window.innerHeight;
+        document.documentElement.style.setProperty('--vh', `${viewportHeight}px`);
+    }
+    
+    window.addEventListener('load', setFullHeight);
+    window.addEventListener('resize', setFullHeight);
+
     var scores = scores_read()
 
     // GET DATA
@@ -541,9 +549,7 @@ function highEnough(){
                 $(".name_col").append('<span class="scoreFrame_columnText">'+data[i][0]+'</span>')
                 $(".score_col").append('<span class="scoreFrame_columnText">'+data[i][1]+'</span>')
             } 
-        }
-
-        
+        }   
     }
 
     if(platform == "Mobile"){
