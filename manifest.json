@@ -1,0 +1,36 @@
+{
+  "name": "HighEnough",
+  "short_name": "HighEnough",
+  "description": "WebApp Game",
+  "start_url": "/HighEnough.github.io/index.html",
+  "display_override": ["fullscreen", "minimal-ui"],
+  "display": "standalone",
+  "background_color": "#43A7EF",
+  "theme_color": "#43A7EF",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/HighEnough.github.io/resources/imgs/icon.png",
+      "type": "image/png",
+      "sizes": "500x500",
+      "purpose": "any"
+    }
+  ],
+  "screenshots" : [
+    {
+      "src": "/HighEnough.github.io/resources/imgs/smallSS.png",
+      "sizes": "430x871",
+      "type": "image/png",
+      "label": "Homescreen of JohnWorkout",
+      "purpose": "any"
+    },
+    {
+      "src": "/HighEnough.github.io/resources/imgs/wideSS.png",
+      "sizes": "1906x963",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Homescreen of JohnWorkout",
+      "purpose": "any"
+    }
+  ]
+}
