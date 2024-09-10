@@ -5,22 +5,6 @@
     font-style: normal;
 }
 
-.konsole{
-    z-index: 999;
-    position: absolute;
-    background-color: black;
-    padding: 5px;
-
-    bottom: 0;
-
-    width: 100%;
-
-    color: white;
-    font-size: 30px;
-
-    word-wrap:break-word;
-}
-
 *{
     position: relative;
 
@@ -44,15 +28,10 @@ html{
     width: 100vw;
     height: 100vh;
 
-    overflow-x: hidden;
-    overflow-y: scroll;
+    overflow: hidden;
 
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
-}
-
-html::-webkit-scrollbar{
-    display: none;
 }
 
 body{
@@ -63,6 +42,10 @@ body{
     
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
+}
+
+html::-webkit-scrollbar{
+    display: none;
 }
 
 body::-webkit-scrollbar{
