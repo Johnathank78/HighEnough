@@ -8,14 +8,6 @@ function highEnough(){
     const platform = "Web"
     var current_page = "landing"
 
-    function setFullHeight() {
-        let viewportHeight = window.innerHeight;
-        document.documentElement.style.setProperty('--vh', `${viewportHeight}px`);
-    }
-    
-    window.addEventListener('load', setFullHeight);
-    window.addEventListener('resize', setFullHeight);
-
     var scores = scores_read()
 
     // GET DATA
