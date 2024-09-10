@@ -55,10 +55,9 @@ body::-webkit-scrollbar{
 .app{
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
 
     width: 100%;
-    height: 325%;
+    height: 300%;
 
     overflow-x: hidden;
     overflow-y: scroll;
