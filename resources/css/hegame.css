@@ -25,7 +25,6 @@ title {
 }
 
 html{
-    position: relative;
     width: 100vw;
     height: 100vh;
 
@@ -56,9 +55,10 @@ body::-webkit-scrollbar{
 .app{
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
 
     width: 100%;
-    height: 300%;
+    height: 325%;
 
     overflow-x: hidden;
     overflow-y: scroll;
