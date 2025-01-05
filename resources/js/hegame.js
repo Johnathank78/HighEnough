@@ -2,13 +2,21 @@ function highEnough(){
 
     // INIT
 
-    const winMsg = ["MAJESTIC", "PERFECT", "GOOD", "NICE", "COOL"]
-    const looseMsg = ["F*CK", "OUCH", "TOO BAD", "CRAP", "NEXT TIME"]
+    const winMsg = ["MAJESTIC", "PERFECT", "GOOD", "NICE", "COOL"];
+    const looseMsg = ["F*CK", "OUCH", "TOO BAD", "CRAP", "NEXT TIME"];
 
     const platform = "Web"
     var current_page = "landing"
 
-    var scores = scores_read()
+    var scores = scores_read();
+
+    const setVh = () => {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+    
+    window.addEventListener('resize', setVh);
+    setVh();
 
     // GET DATA
     
@@ -58,8 +66,10 @@ function highEnough(){
         phoneINIT()
     }
     
+    var minHeight = Math.round((59 / $(".gameFrame").height()) * 100);
+
     $("body").scrollTop($(window).height())
-    $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+7+"%, #87cefa "+7+"%, #87cefa 100%)")
+    $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+minHeight+"%"+", #87cefa "+minHeight+"%"+", #87cefa 100%)");
     
     // UTILITY
     
@@ -113,13 +123,19 @@ function highEnough(){
     }
 
     $(window).on('resize', function(){
+        console.log("ifejifj", current_page)
         if(current_page == "landing"){
             $("body").scrollTop($(window).height())
-        }if(current_page == "game"){
-            $("body").scrollTop(0)
+        }if(current_page == "play"){
+            $("body").scrollTop(0);
         }if(current_page == "scores"){
             $("body").scrollTop(2*$(window).height())
-        }
+        };
+
+        minHeight = Math.round((59 / $(".gameFrame").height()) * 100);
+        if(!growIntervall && !unFillIntervall){
+            $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+minHeight+"%"+", #87cefa "+minHeight+"%"+", #87cefa 100%)")
+        };
     })
 
     // BTN
@@ -413,14 +429,14 @@ function highEnough(){
         $('.pauseScreen').css('display', 'none')
     })
 
-    var isAnimationOver = false
-    var hasBeenReleased = false
+    var isAnimationOver = true
+    var hasBeenReleased = true
 
     var growIntervall = false
     var unFillIntervall = false
     
-    var height = 7
-    var speed = 1000
+    var height = minHeight;
+    var speed = 4000
 
     var lastRoundPressed = round
     
@@ -461,11 +477,12 @@ function highEnough(){
         hasBeenReleased = true
 
         finalHeight = $(".gameFrame").height() - (height/100) * $(".gameFrame").height()
+        minHeight = Math.round((59 / $(".gameFrame").height()) * 100);
         let step = (100/speed)*8
 
         unFillIntervall = setInterval(() => {
-            if(height < 7){
-                $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+"7%"+", #87cefa "+"7%"+", #87cefa 100%)")
+            if(height < minHeight){
+                $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+minHeight+"%"+", #87cefa "+minHeight+"%"+", #87cefa 100%)");
                 clearInterval(unFillIntervall)
                 unFillIntervall = false
             }else{
@@ -541,7 +558,9 @@ function highEnough(){
                 $(".name_col").append('<span class="scoreFrame_columnText">'+data[i][0]+'</span>')
                 $(".score_col").append('<span class="scoreFrame_columnText">'+data[i][1]+'</span>')
             } 
-        }   
+        }
+
+        
     }
 
     if(platform == "Mobile"){
@@ -559,8 +578,7 @@ function highEnough(){
             }
         }); 
     }
-}
-
+};
 
 //RUN
 $(document).ready(function(){highEnough()})
