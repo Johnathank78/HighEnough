@@ -49,6 +49,8 @@ html{
 
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
+
+    background-color: rgb(135,206,250);
 }
 
 html::-webkit-scrollbar{
