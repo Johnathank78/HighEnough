@@ -2,8 +2,22 @@ function highEnough(){
 
     // INIT
 
-    const winMsg = ["MAJESTIC", "PERFECT", "GOOD", "NICE", "COOL"];
-    const looseMsg = ["F*CK", "OUCH", "TOO BAD", "CRAP", "NEXT TIME"];
+    const winMsg = [
+        "MAJESTIC", "PERFECT", "GOOD", "NICE", "COOL",
+        "AWESOME", "BRILLIANT", "EXCELLENT", "FANTASTIC", "WONDERFUL",
+        "INCREDIBLE", "OUTSTANDING", "SUPERB", "SPECTACULAR", "AMAZING",
+        "IMPRESSIVE", "FABULOUS", "EPIC", "GLORIOUS", "MAGNIFICENT", "PHENOMENAL", 
+        "UNSTOPPABLE", "LEGENDARY"
+    ];
+
+    const looseMsg = [
+        "F*CK", "OUCH", "TOO BAD", "CRAP", "NEXT TIME",
+        "BUMMER", "FAIL", "YIKES", "CLOSE ONE", "UH-OH",
+        "WHOOPS", "DISASTER", "TRY AGAIN", "SO CLOSE",
+        "TRAGIC", "BUSTED", "NOPE", "OUCHIE", "MISS", "WRONG MOVE", 
+        "TOUGH BREAK", "DARN"
+    ];
+    
 
     const platform = "Web";
     var current_page = "landing";
@@ -25,7 +39,9 @@ function highEnough(){
     var round = 0;
     var score = 0;
     var hearts = 3;
-    
+
+    var initSize = $('.gameFrame_gameGoal').css('height');
+
     var gameIntervall = false;
     var minHeight = Math.round((59 / $(".gameFrame").height()) * 100);
 
@@ -269,7 +285,7 @@ function highEnough(){
             score += 1 
             $(".gameFrame_score").text('SCORE : ' + score.toString())
 
-            if(score%10 == 0 && $(".gameFrame_gameGoal").height() > 10){
+            if(score%10 == 0 && $(".gameFrame_gameGoal").height() > 17.5){
                 $(".gameFrame_gameGoal").css("height", ($(".gameFrame_gameGoal").height() - 2.5) + "px")
             }
 
@@ -357,7 +373,7 @@ function highEnough(){
             opacity : 0
         }, text_fadeOutDelay)
 
-        $(".gameFrame_gameGoal").css("height", "30px")
+        $(".gameFrame_gameGoal").css("height", initSize)
 
         hearts = 3
         
@@ -433,7 +449,7 @@ function highEnough(){
     })
 
 
-    var lastRoundPressed = round
+    var lastRoundPressed = round;
     
     $(document).on("mousedown touchstart", function(e){
         if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 || paused || !isAnimationOver || !gameReady || gameover){return}
