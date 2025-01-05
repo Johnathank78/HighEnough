@@ -503,23 +503,23 @@ function highEnough(){
                     $('html').css('backgroundColor', "rgb(135, 206, 250)");
                 };
 
-                if($("body").scrollTop() <= $(window).height()){
+                if($("body").scrollTop() - step <= $(window).height()){
                     $("body").scrollTop($(window).height())
                     clearInterval(scrollIntervall)
                 }else{
-                    $("body").scrollTop($("body").scrollTop() - step)                  
-                }
+                    $("body").scrollTop($("body").scrollTop() - step)     
+                };
             }, 1);
 
         }else if(current_page == "play"){
             let step = 8
             let scrollIntervall = setInterval(() => {
-                if($("body").scrollTop() >= $(window).height()){
+                if($("body").scrollTop() + step >= $(window).height()){
                     $("body").scrollTop($(window).height())
                     clearInterval(scrollIntervall)
                 }else{
-                    $("body").scrollTop($("body").scrollTop() + step)
-                }
+                    $("body").scrollTop($("body").scrollTop() + step)     
+                };
             }, 1);
         }
 
@@ -537,7 +537,6 @@ function highEnough(){
 
         let step = 8
         let scrollIntervall = setInterval(() => {
-            //console.log(Math.round(($("body").scrollTop()/$('.app').height()) * 100))
             if(Math.round(($("body").scrollTop()/$('.app').height()) * 100) >= 60){
                 $('html').css('backgroundColor', "rgb(164 104 16)");
             };
@@ -545,6 +544,7 @@ function highEnough(){
             if($("body").scrollTop() >= 2*$(window).height()){
                 clearInterval(scrollIntervall)
             }
+
             $("body").scrollTop($("body").scrollTop() + step)
         }, 1);
 
