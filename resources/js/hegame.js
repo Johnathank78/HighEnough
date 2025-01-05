@@ -410,7 +410,6 @@ function highEnough(){
 
     // MECHANIC
 
-
     $(document).on("click", '.gameFrame_pause, .pauseScreen_resume', function(){
 
         if(paused){
@@ -500,6 +499,10 @@ function highEnough(){
         if(current_page == "scores"){
             let step = 8
             let scrollIntervall = setInterval(() => {
+                if(Math.round(($("body").scrollTop()/$('.app').height()) * 100) <= 60){
+                    $('html').css('backgroundColor', "rgb(135, 206, 250)");
+                };
+
                 if($("body").scrollTop() <= $(window).height()){
                     $("body").scrollTop($(window).height())
                     clearInterval(scrollIntervall)
@@ -534,6 +537,11 @@ function highEnough(){
 
         let step = 8
         let scrollIntervall = setInterval(() => {
+            //console.log(Math.round(($("body").scrollTop()/$('.app').height()) * 100))
+            if(Math.round(($("body").scrollTop()/$('.app').height()) * 100) >= 60){
+                $('html').css('backgroundColor', "rgb(164 104 16)");
+            };
+            
             if($("body").scrollTop() >= 2*$(window).height()){
                 clearInterval(scrollIntervall)
             }
