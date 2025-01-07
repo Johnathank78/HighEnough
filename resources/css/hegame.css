@@ -421,6 +421,7 @@ body::-webkit-scrollbar{
 
 .scoreFrame{
     background-color: #A46810;
+    align-items: center;
 }
 
 .scoreFrame_leaveBtn{
@@ -457,20 +458,13 @@ body::-webkit-scrollbar{
 }
 
 .scoreFrame_wrapperAll{
-    position: absolute;
- 
     display: flex;
     flex-direction: column;
     gap: 30px;
 
-    top: 50%;
-    left: 50%;
-
-    transform: translate(-50%, -75%);
-
     width: 70vw;
     max-width: 252px;
-    max-height: 30vh;
+    max-height: 70vh;
 }
 
 .scoreFrame_wrapper{

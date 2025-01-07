@@ -1,5 +1,11 @@
 function highEnough(){
 
+    // METHOD
+
+    jQuery.fn.getStyleValue = function(prop){
+        return parseFloat($(this).css(prop).replace('px', ''));
+    };
+
     // INIT
 
     const winMsg = [
@@ -38,9 +44,11 @@ function highEnough(){
     var combo = 0;
     var round = 0;
     var score = 0;
+
+    var maxhearts = 3;
     var hearts = 3;
 
-    var initSize = $('.gameFrame_gameGoal').css('height');
+    var initSizeText = $('.gameFrame_gameGoal').css('height');
 
     var gameIntervall = false;
     var minHeight = Math.round((59 / $(".gameFrame").height()) * 100);
@@ -59,23 +67,25 @@ function highEnough(){
     var speed = 1200;
     var finalHeight = 0;
 
+    var comboGoal = 5;
+
     // GET DATA
     
     function scores_read(){
-        let data = localStorage.getItem("scores")
+        let data = localStorage.getItem("scores");
 
-        if (data === null || data == ""){
-            scores_save([])
-            return []
+        if(data === null || data == ""){
+            scores_save([]);
+            return [];
         }else{ 
-            data = JSON.parse(data)
-            return data
-        }
+            data = JSON.parse(data);
+            return data;
+        };
     };
 
     function scores_save(data){
-        localStorage.setItem("scores", JSON.stringify(data))
-        return
+        localStorage.setItem("scores", JSON.stringify(data));
+        return;
     };
 
     async function phoneINIT(){
@@ -86,159 +96,155 @@ function highEnough(){
             StatusBar.hide({ animation : 'SLIDE'});
         }, 2500);
 
-
-        let isHiding = false
+        let isHiding = false;
 
         setInterval(async () => {
             let data = await StatusBar.getInfo()
 
             if(data.visible && !isHiding){
-                isHiding = true
+                isHiding = true;
                 setTimeout(async () => {
                     await StatusBar.hide({ animation : 'SLIDE'});
-                    isHiding = false
+                    isHiding = false;
                 }, 2500);
-            }
+            };
 
         }, 100);
     };
     
     if(platform == "Mobile"){
-        phoneINIT()
+        phoneINIT();
     };
     
     
     // UTILITY
     
     function zoom(target, vec, zoomStrength, zoomSpeed, zoomCenter=[0.5, 0.5], callback=false){
+        let HWRatio = $(target).height()/$(target).width();
         
-        let HWRatio = $(target).height()/$(target).width()
+        let zoomStrengthWH = [zoomStrength, zoomStrength*HWRatio];
+        let zoomOffset = [(zoomStrengthWH[0]/2), (zoomStrengthWH[1]/2)];
         
-        let zoomStrengthWH = [zoomStrength, zoomStrength*HWRatio]
-        let zoomOffset = [(zoomStrengthWH[0]/2), (zoomStrengthWH[1]/2)]
-        
-        let tZoomCenter = []
-        
-        for(let i=0; i < zoomCenter.length; i++){
-            if(zoomCenter[i] < 0.5){
-                tZoomCenter[i] = 1 - zoomCenter[i]
-            }else{
-                tZoomCenter[i] = 0.5 + zoomCenter[i]
-            }
-        }
+        let tZoomCenter = zoomCenter;
 
-        $(target).animate({
-            width: "+="+vec*zoomStrengthWH[0]+"px",
-            height: "+="+vec*zoomStrengthWH[1]+"px",
-            left: "+="+(-vec)*zoomOffset[0]*tZoomCenter[0]+"px",
-            top: "+="+(-vec)*zoomOffset[1]*tZoomCenter[1]+"px",
-        }, zoomSpeed, function(){
-            if(callback){callback()}
-        })
-    }
+        if($(target).is('span')){
+            $(target).animate({
+                fontSize: "+="+vec*zoomStrength*0.45+"px"
+            }, zoomSpeed, function(){
+                if(callback){callback()};
+            });
+        }else{
+            $(target).animate({
+                width: "+="+vec*zoomStrengthWH[0]+"px",
+                height: "+="+vec*zoomStrengthWH[1]+"px",
+                left: "+="+(-vec)*zoomOffset[0]*tZoomCenter[0]+"px",
+                top: "+="+(-vec)*zoomOffset[1]*tZoomCenter[1]+"px",
+            }, zoomSpeed, function(){
+                if(callback){callback()};
+            });
+        };
+    };
 
     function tilt(target, strenght, speed, center, tiltPause, midCallback=false, endCallBack=false){
         zoom(target, 1, strenght, speed/2, center, function(){
             if(midCallback){midCallback()}
             setTimeout(() => {
                 if(endCallBack){
-                    zoom(target, -1, strenght, speed/3, center, endCallBack)
+                    zoom(target, -1, strenght, speed/3, center, endCallBack);
                 }else{
-                    zoom(target, -1, strenght, speed/3, center)
-                }
+                    zoom(target, -1, strenght, speed/3, center);
+                };
             }, tiltPause);
-        })
-        
-    }
+        });
+    };
 
     // FIX
 
     if(platform == "Web"){
         document.oncontextmenu = function(){
-            return false
-        }
-    }
+            return false;
+        };
+    };
 
     $(window).on('resize', function(){
         if(current_page == "landing"){
-            $("body").scrollTop($(window).height())
+            $("body").scrollTop($(window).height());
         }if(current_page == "play"){
             $("body").scrollTop(0);
         }if(current_page == "scores"){
-            $("body").scrollTop(2*$(window).height())
+            $("body").scrollTop(2*$(window).height());
         };
 
         minHeight = Math.round((59 / $(".gameFrame").height()) * 100);
         if(!growIntervall && !unFillIntervall){
-            $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+minHeight+"%"+", #87cefa "+minHeight+"%"+", #87cefa 100%)")
+            $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+minHeight+"%"+", #87cefa "+minHeight+"%"+", #87cefa 100%)");
         };
-    })
+    });
 
     // BTN
 
     $(".mainFrame_btn").on("click", function(e){
         if($(this).hasClass("play")){
-            startParty()
+            startParty();
         }else if($(this).hasClass("scores")){
-            showScoreboard()
-        }
-    })
+            showScoreboard();
+        };
+    });
 
     // GAME
 
     function getGoalPos(){
-        let allZone = 0.5 * $(window).height()
-        let deadZone = allZone * 0.3
-        let safeZone = allZone - deadZone
+        let allZone = 0.5 * $(window).height();
+        let deadZone = allZone * 0.3;
+        let safeZone = allZone - deadZone;
 
-        let randomVal = [Math.random(0, 1)*deadZone, deadZone + Math.random(0, 1)*safeZone, deadZone + Math.random(0, 1)*safeZone, deadZone + Math.random(0, 1)*safeZone, deadZone + Math.random(0, 1)*safeZone]
-        let randomInd = Math.round(Math.random(0, 1)*(randomVal.length - 1))
+        let randomVal = [Math.random(0, 1)*deadZone, deadZone + Math.random(0, 1)*safeZone, deadZone + Math.random(0, 1)*safeZone, deadZone + Math.random(0, 1)*safeZone, deadZone + Math.random(0, 1)*safeZone];
+        let randomInd = Math.round(Math.random(0, 1)*(randomVal.length - 1));
 
-        return 125 + randomVal[randomInd]
-    }
+        return 125 + randomVal[randomInd];
+    };
         
     function startParty(replay=false){
-        current_page = "play"
+        current_page = "play";
 
-        if(gameIntervall){clearInterval(gameIntervall); gameIntervall = false}
+        if(gameIntervall){clearInterval(gameIntervall); gameIntervall = false};
 
         if(!replay){
-            let step = 8
+            let step = 8;
             let scrollIntervall = setInterval(() => {
-                if($("body").scrollTop() <= 0){gameStart(); clearInterval(scrollIntervall)}
-                $("body").scrollTop($("body").scrollTop() - step)
+                if($("body").scrollTop() <= 0){gameStart(); clearInterval(scrollIntervall)};
+                $("body").scrollTop($("body").scrollTop() - step);
             }, 1);
-        }
+        };
 
         gameIntervall = setInterval(() => {
             if(gameReady && nextRound && !gameover){
-
-                round += 1
-                nextRound = false
-                isAnimationOver = true
-                hasBeenReleased = false
+                round += 1;
+                nextRound = false;
+                isAnimationOver = true;
+                hasBeenReleased = false;
                 
-                let randomHeight = getGoalPos()
+                let randomHeight = getGoalPos();
 
-                $(".gameFrame_gameGoal").css('top', randomHeight + "px")
+                $(".gameFrame_gameGoal").css('top', randomHeight + "px");
                 $(".gameFrame_gameGoal").animate({
                     opacity: 1
-                }, goal_fadeInDelay)
-
-            }
+                }, goal_fadeInDelay);
+            };
         }, 1);
-    }
+    };
 
     function gameStart(){
-        current_page = "play"
-        gameReady = true
+        current_page = "play";
+        gameReady = true;
 
-        $(".gameFrame_gameGoal").css("display", "flex")
-    }
+        $(".gameFrame_gameGoal").css("display", "flex");
+    };
 
     function endOfRound(){
 
         // CALCULATE BOUNDS
+
         let barTop = finalHeight
         let goalUpperBound = $(".gameFrame_gameGoal").offset().top
         let goalLowerBound = goalUpperBound + $(".gameFrame_gameGoal").height()
@@ -252,67 +258,80 @@ function highEnough(){
 
         let target = false
         let target_shadow = false
+        let heartId = maxhearts - hearts;
 
         if(barTop >= goalUpperBound && barTop <= goalLowerBound){
-            won = true
-            combo += 1
+            won = true;
+            combo += 1;
 
-            target = $(".gameFrame_winMsg, .gameFrame_scoreMsg")
-            target_shadow = $(".gameFrame_winMsg_shadow, .gameFrame_scoreMsg_shadow")
+            target = $(".gameFrame_winMsg, .gameFrame_scoreMsg");
+            target_shadow = $(".gameFrame_winMsg_shadow, .gameFrame_scoreMsg_shadow");
 
-            randomWord = winMsg[Math.round(Math.random(0, 1)*(winMsg.length - 1))]
+            randomWord = winMsg[Math.round(Math.random(0, 1)*(winMsg.length - 1))];
 
-            if(combo == 5){
-                combo = 0
-                if(hearts < 3){
-                    tilt($($(".gameFrame_heart")[hearts]), 15, 1225, [0.5, 1], 100, function(){
-                        $($(".gameFrame_heart")[hearts]).attr("src", "./resources/imgs/heartFull1.svg")
-                        hearts += 1
-                    }, function(){
-                        $(".gameFrame_heart").eq(hearts).removeAttr('style');
-                    })
+            if(combo%comboGoal == 0){
+                if(hearts < maxhearts){
+                    tilt($(".gameFrame_heart").eq(heartId - 1), 15, 1225, [0.5, 1], 100, function(){
+                        $(".gameFrame_heart").eq(heartId - 1).attr("src", "./resources/imgs/heartFull1.svg");
+                        hearts += 1;
+                    });
 
-                    $(".gameFrame_winMsg_shadow, .gameFrame_winMsg").text("COMBO x5")
-                    $('.gameFrame_scoreMsg_shadow, .gameFrame_scoreMsg').html('+<img src="./resources/imgs/heartFull1.svg" class="gameFrame_heartText" alt="">')
-                }
-            }
+                    $(".gameFrame_winMsg_shadow, .gameFrame_winMsg").text("COMBO x"+combo);
+                    $('.gameFrame_scoreMsg_shadow, .gameFrame_scoreMsg').html('+<img src="./resources/imgs/heartFull1.svg" class="gameFrame_heartText" alt="">');
+                }else if((combo == comboGoal && maxhearts == 3 || combo == 2*comboGoal && maxhearts == 4) && maxhearts == hearts){
+                    hearts += 1;
+                    maxhearts += 1;
 
-            if(hearts == 3 || combo != 0){
-                $(".gameFrame_winMsg_shadow, .gameFrame_winMsg").text(randomWord)
-                $('.gameFrame_scoreMsg_shadow, .gameFrame_scoreMsg').html("+1")
-            }
+                    $(".gameFrame_winMsg_shadow, .gameFrame_winMsg").text("COMBO x"+combo);
+                    $('.gameFrame_scoreMsg_shadow, .gameFrame_scoreMsg').html('+<img src="./resources/imgs/heartFull1.svg" class="gameFrame_heartText" alt="">');
 
-            score += 1 
-            $(".gameFrame_score").text('SCORE : ' + score.toString())
+                    let additionalHeart = $('<img src="./resources/imgs/heartFull1.svg" class="gameFrame_heart" alt="">');
+                    $(additionalHeart).css({
+                        right: $('.gameFrame_heart').last().getStyleValue('right') + 30 + "px",
+                        opacity: 0
+                    });
+
+                    $('.gameFrame').append($(additionalHeart));
+                    $(".gameFrame_heart").last().animate({
+                        opacity: 1
+                    }, 100);
+
+                    tilt($(".gameFrame_heart").last(), 15, 1225, [0.5, 1], 100);
+                };
+            }else{
+                $(".gameFrame_winMsg_shadow, .gameFrame_winMsg").text(randomWord);
+                $('.gameFrame_scoreMsg_shadow, .gameFrame_scoreMsg').html("+1");
+            };
+
+            score += 1;
+            $(".gameFrame_score").text('SCORE : ' + score.toString());
 
             if(score%10 == 0 && $(".gameFrame_gameGoal").height() > 17.5){
-                $(".gameFrame_gameGoal").css("height", ($(".gameFrame_gameGoal").height() - 2.5) + "px")
-            }
-
+                $(".gameFrame_gameGoal").css("height", ($(".gameFrame_gameGoal").height() - 2.5) + "px");
+                tilt($('.gameFrame_score').eq(0), 30, 1225, [-0.5, -0.5], 300);
+            };
         }else{
-            combo = 0
-            target = $(".gameFrame_winMsg")
-            target_shadow = $(".gameFrame_winMsg_shadow")
+            combo = 0;
+            target = $(".gameFrame_winMsg");
+            target_shadow = $(".gameFrame_winMsg_shadow");
 
-            randomWord = looseMsg[Math.round(Math.random(0, 1)*(looseMsg.length - 1))]
-            $(".gameFrame_winMsg_shadow, .gameFrame_winMsg").text(randomWord)
+            randomWord = looseMsg[Math.round(Math.random(0, 1)*(looseMsg.length - 1))];
+            $(".gameFrame_winMsg_shadow, .gameFrame_winMsg").text(randomWord);
 
-            tilt($($(".gameFrame_heart")[hearts - 1]), 15, 1225, [0.5, 1], 100, function(){
-                $($(".gameFrame_heart")[hearts - 1]).attr("src", "./resources/imgs/heartEmpty1.svg")
-                hearts -= 1
-            }, function(){
-                $(".gameFrame_heart").eq(hearts).removeAttr('style');
-            })
+            tilt($(".gameFrame_heart").eq(heartId), 15, 1225, [0.5, 1], 100, function(){
+                $(".gameFrame_heart").eq(heartId).attr("src", "./resources/imgs/heartEmpty1.svg");
+                hearts -= 1;
+            });
 
             if(hearts == 1){
                 setTimeout(() => {
-                    clearInterval(gameIntervall)
-                    gameIntervall = false
-                    gameOver()
-                    return
+                    clearInterval(gameIntervall);
+                    gameIntervall = false;
+                    gameOver();
+                    return;
                 }, 250);
             }
-        }
+        };
 
         if(!(hearts == 1 && !won) && hearts >= 1){
             $(target).animate({
@@ -321,9 +340,9 @@ function highEnough(){
                 setTimeout(() => {                    
                     $(target).animate({
                         opacity: 0
-                    }, text_fadeOutDelay)
+                    }, text_fadeOutDelay);
                 }, text_fadePauseDelay);
-            })
+            });
     
             $(target_shadow).animate({
                 opacity: .3
@@ -331,139 +350,137 @@ function highEnough(){
                 setTimeout(() => {
                     $(target_shadow).animate({
                         opacity: 0
-                    }, text_fadeOutDelay)
+                    }, text_fadeOutDelay);
                 }, text_fadePauseDelay);
-            })
+            });
             
             setTimeout(() => {
                 nextRound = true
             }, text_fadeInDelay + text_fadePauseDelay + text_fadeOutDelay);
-        }
-
-    }
+        };
+    };
 
     $('.gameFrame').on("dropped", function(){
-        endOfRound()
-    })
+        endOfRound();
+    });
 
     function gameOver(){
-        gameover = true
-        nextRound = false
+        gameover = true;
+        nextRound = false;
 
         $('.gameFrame_gameOverWrapper').animate({
             opacity : 1
         }, text_fadeInDelay, function(){
             $('.gameFrame_gameOverWrapper').css('pointer-events', 'all')
-        })
+        });
         
-        $(".gameFrame_winMsg_shadow, .gameFrame_winMsg").text("GAME OVER !")
+        $(".gameFrame_winMsg_shadow, .gameFrame_winMsg").text("GAME OVER !");
         $(".gameFrame_winMsg").animate({
             opacity: 1
-        }, text_fadeInDelay)
+        }, text_fadeInDelay);
         
         $(".gameFrame_winMsg_shadow").animate({
             opacity: .3
-        }, text_fadeInDelay)
-    }
+        }, text_fadeInDelay);
+    };
 
     function gameReset(){
-        $('.gameFrame_gameOverWrapper').css('pointer-events', 'none')
+        $('.gameFrame_gameOverWrapper').css('pointer-events', 'none');
         
         $('.gameFrame_gameOverWrapper').animate({
             opacity : 0
-        }, text_fadeOutDelay)
+        }, text_fadeOutDelay);
 
-        $(".gameFrame_gameGoal").css("height", initSize)
+        $(".gameFrame_gameGoal").css("height", initSizeText);
 
-        hearts = 3
+        hearts = 3;
+        $('.gameFrame_heart').slice(3).remove();
         
-        round = 0
-        score = 0
-        combo = 0
+        round = 0;
+        score = 0;
+        combo = 0;
 
-        isAnimationOver = false
-        hasBeenReleased = true
-        lastRoundPressed = 0
+        isAnimationOver = false;
+        hasBeenReleased = true;
+        lastRoundPressed = 0;
 
-        $(".gameFrame_score").text('SCORE : ' + score.toString())
+        $(".gameFrame_score").text('SCORE : ' + score.toString());
 
         $(".gameFrame_winMsg").animate({
             opacity: 0
-        }, text_fadeOutDelay, function(){
-        })
+        }, text_fadeOutDelay);
 
         $(".gameFrame_winMsg_shadow").animate({
             opacity: 0
-        }, text_fadeOutDelay)
+        }, text_fadeOutDelay);
 
         setTimeout(() => {
             gameover = false
             nextRound = true
         }, Math.max(text_fadeOutDelay, goal_fadeInDelay));
 
-        $(".gameFrame_heart").attr("src", "./resources/imgs/heartFull1.svg")
-    }
+        $(".gameFrame_heart").attr("src", "./resources/imgs/heartFull1.svg");
+    };
 
     function saveScore(){
-        scores.push([$('#player').val(), score])
+        scores.push([$('#player').val(), score]);
         scores.sort((a, b) => b[1] - a[1]);
 
-        scores = scores.slice(0, 6)
-        scores_save(scores)
-    }
+        scores = scores.slice(0, 6);
+        scores_save(scores);
+    };
 
     $(".gameFrame_goBack").on("click", function(){
-        saveScore()
-        gameReset()
-        goToMain()
-    })
+        saveScore();
+        gameReset();
+        goToMain();
+    });
 
     $(".gameFrame_playAgain").on("click", function(){
-        saveScore()
-        gameReset()
-        startParty(true)
-    })
+        saveScore();
+        gameReset();
+        startParty(true);
+    });
 
     // MECHANIC
 
     $(document).on("click", '.gameFrame_pause, .pauseScreen_resume', function(){
 
         if(paused){
-            $(".pauseScreen").css("display", 'none')
+            $(".pauseScreen").css("display", 'none');
         }else{
-            $(".pauseScreen").css("display", 'flex')
-        }
+            $(".pauseScreen").css("display", 'flex');
+        };
 
-        paused = !paused
-    })
+        paused = !paused;
+    });
 
     $(".pauseScreen_leave").on('click', function(){
-        gameReset()
-        goToMain()
+        gameReset();
+        goToMain();
         
-        paused = false
-        gameReady = false
+        paused = false;
+        gameReady = false;
 
-        $(".gameFrame_gameGoal").css("opacity", "0")
-        $('.pauseScreen').css('display', 'none')
-    })
-
+        $(".gameFrame_gameGoal").css("opacity", "0");
+        $('.pauseScreen').css('display', 'none');
+    });
 
     var lastRoundPressed = round;
     
     $(document).on("mousedown touchstart", function(e){
-        if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 || paused || !isAnimationOver || !gameReady || gameover){return}
+        if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 || paused || !isAnimationOver || !gameReady || gameover){return};
 
         if(unFillIntervall){
             clearInterval(unFillIntervall)
             unFillIntervall = false
-        }
+        };
         
-        isAnimationOver = false
-        hasBeenReleased = false
-        lastRoundPressed = round
+        isAnimationOver = false;
+        hasBeenReleased = false;
+        lastRoundPressed = round;
 
-        let step = (100/speed)*3
+        let step = (100/speed)*3;
         
         growIntervall = setInterval(() => {
             if($(".gameFrame").height() - (height/100) * $(".gameFrame").height() < $(".gameFrame_gameGoal").offset().top - 30){
@@ -472,48 +489,47 @@ function highEnough(){
             }else{
                 height += step
                 $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+height+"%, #87cefa "+height+"%, #87cefa 100%)")
-            }
-        }, 1)
-    })
+            };
+        }, 1);
+    });
 
     $(document).on("mouseup touchend", function(e){
-        if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 || paused || lastRoundPressed != round || hasBeenReleased || isAnimationOver || !gameReady || gameover){return}
+        if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 || paused || lastRoundPressed != round || hasBeenReleased || isAnimationOver || !gameReady || gameover){return};
         
-        releasePress($(".gameFrame")[0])
-    })
+        releasePress($(".gameFrame")[0]);
+    });
 
     function releasePress(item){
+        hasBeenReleased = true;
 
-        hasBeenReleased = true
-
-        finalHeight = $(".gameFrame").height() - (height/100) * $(".gameFrame").height()
+        finalHeight = $(".gameFrame").height() - (height/100) * $(".gameFrame").height();
         minHeight = Math.round((59 / $(".gameFrame").height()) * 100);
-        let step = (100/speed)*8
+        let step = (100/speed)*8;
 
         unFillIntervall = setInterval(() => {
             if(height < minHeight){
                 $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+minHeight+"%"+", #87cefa "+minHeight+"%"+", #87cefa 100%)");
-                clearInterval(unFillIntervall)
-                unFillIntervall = false
+                clearInterval(unFillIntervall);
+                unFillIntervall = false;
             }else{
-                height -= step
-                $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+height+"%, #87cefa "+height+"%, #87cefa 100%)")
-            }
+                height -= step;
+                $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+height+"%, #87cefa "+height+"%, #87cefa 100%)");
+            };
         }, 1);
 
-        let event = new CustomEvent('dropped', { bubbles: true })
-        item.dispatchEvent(event)
+        let event = new CustomEvent('dropped', { bubbles: true });
+        item.dispatchEvent(event);
 
-        if(platform == "Mobile"){Haptics.impact({ style: ImpactStyle.Medium })}
+        if(platform == "Mobile"){Haptics.impact({ style: ImpactStyle.Medium })};
 
-        clearInterval(growIntervall)
-        growIntervall = false
-    }
+        clearInterval(growIntervall);
+        growIntervall = false;
+    };
 
     function goToMain(){
 
         if(current_page == "scores"){
-            let step = 8
+            let step = 8;
             let scrollIntervall = setInterval(() => {
                 if(Math.round(($("body").scrollTop()/$('.app').height()) * 100) <= 60){
                     $('html').css('backgroundColor', "rgb(135, 206, 250)");
@@ -528,7 +544,7 @@ function highEnough(){
             }, 1);
 
         }else if(current_page == "play"){
-            let step = 8
+            let step = 8;
             let scrollIntervall = setInterval(() => {
                 if($("body").scrollTop() + step >= $(window).height()){
                     $("body").scrollTop($(window).height())
@@ -537,21 +553,21 @@ function highEnough(){
                     $("body").scrollTop($("body").scrollTop() + step)     
                 };
             }, 1);
-        }
+        };
 
-        current_page = "landing"
+        current_page = "landing";
     }   
 
     // SCORES
 
     $(".scoreFrame_leaveBtn").on("click", function(){
-        goToMain()
-    })
+        goToMain();
+    });
 
     function showScoreboard(){
-        current_page = "scores"
+        current_page = "scores";
 
-        let step = 8
+        let step = 8;
         let scrollIntervall = setInterval(() => {
             if(Math.round(($("body").scrollTop()/$('.app').height()) * 100) >= 60){
                 $('html').css('backgroundColor', "rgb(164 104 16)");
@@ -559,28 +575,26 @@ function highEnough(){
             
             if($("body").scrollTop() >= 2*$(window).height()){
                 clearInterval(scrollIntervall)
-            }
+            };
 
-            $("body").scrollTop($("body").scrollTop() + step)
+            $("body").scrollTop($("body").scrollTop() + step);
         }, 1);
 
-        $(".rank_col, .name_col, .score_col").find(".scoreFrame_columnText").remove()
+        $(".rank_col, .name_col, .score_col").find(".scoreFrame_columnText").remove();
 
-        let data = scores
+        let data = scores;
 
         if(scores.length == 0){
-            $('.scoreFrame_EmptyMsg').css("display", "inline-block")
+            $('.scoreFrame_EmptyMsg').css("display", "inline-block");
         }else{
-            $('.scoreFrame_EmptyMsg').css("display", "none")
+            $('.scoreFrame_EmptyMsg').css("display", "none");
             for(let i=0; i<data.length; i++){
-                $(".rank_col").append('<span class="scoreFrame_columnText">'+(i+1).toString()+'</span>')
-                $(".name_col").append('<span class="scoreFrame_columnText">'+data[i][0]+'</span>')
-                $(".score_col").append('<span class="scoreFrame_columnText">'+data[i][1]+'</span>')
-            } 
-        }
-
-        
-    }
+                $(".rank_col").append('<span class="scoreFrame_columnText">'+(i+1).toString()+'</span>');
+                $(".name_col").append('<span class="scoreFrame_columnText">'+data[i][0]+'</span>');
+                $(".score_col").append('<span class="scoreFrame_columnText">'+data[i][1]+'</span>');
+            };
+        };
+    };
 
     function goBack(platform){
         if(current_page == "scores"){
@@ -590,7 +604,7 @@ function highEnough(){
                 $('.gameFrame_goBack').click();
             }else{
                 $('.gameFrame_pause').click();
-            }
+            };
         }else if(current_page == "landing" && platform == "Mobile"){
             App.exitApp();
         };
