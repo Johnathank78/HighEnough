@@ -23,13 +23,15 @@ function highEnough(){
         "TRAGIC", "BUSTED", "NOPE", "OUCHIE", "MISS", "WRONG MOVE", 
         "TOUGH BREAK", "DARN"
     ];
-    
 
     const platform = "Web";
     var current_page = "landing";
 
+    var HErecovery = HErecovery_read();
     var scores = scores_read();
 
+    var goalRandomHeight = false;
+    var goalSize = 35;
     var goal_fadeInDelay = 150;
     var goal_fadeOutDelay = 150;
 
@@ -42,6 +44,7 @@ function highEnough(){
     var gameover = false;
 
     var combo = 0;
+    var maxCombo = 0;
     var round = 0;
     var score = 0;
 
@@ -67,7 +70,7 @@ function highEnough(){
     var speed = 1200;
     var finalHeight = 0;
 
-    var comboGoal = 5;
+    var comboGoal = 3;
 
     // GET DATA
     
@@ -86,6 +89,50 @@ function highEnough(){
     function scores_save(data){
         localStorage.setItem("scores", JSON.stringify(data));
         return;
+    };
+
+    function HErecovery_read(){
+        let data = localStorage.getItem("HErecovery");
+    
+        if(data === null || data == ""){
+            return false;
+        }else{
+            data = JSON.parse(data);
+            return data;
+        };
+    };
+    
+    function HErecovery_save(data){
+        localStorage.setItem("HErecovery", JSON.stringify(data));
+        return;
+    };
+
+    function update_HErecovery(){
+        HErecovery = {
+            "gameover": gameover,
+            "combo": combo,
+            "maxCombo": maxCombo,
+            "score": score,
+            "hearts": hearts,
+            "maxhearts": maxhearts,
+            "goalHeight": goalRandomHeight,
+            "goalSize": goalSize
+        };
+
+        HErecovery_save(HErecovery);
+    };
+
+    function HErecovery_init(mode){
+        HErecovery = {
+            "gameover": false,
+            "combo": false,
+            "maxCombo": false,
+            "score": false,
+            "hearts": false,
+            "maxhearts": false,
+            "goalHeight": false,
+            "goalSize": false
+        };
     };
 
     async function phoneINIT(){
@@ -158,29 +205,6 @@ function highEnough(){
         });
     };
 
-    // FIX
-
-    if(platform == "Web"){
-        document.oncontextmenu = function(){
-            return false;
-        };
-    };
-
-    $(window).on('resize', function(){
-        if(current_page == "landing"){
-            $("body").scrollTop($(window).height());
-        }if(current_page == "play"){
-            $("body").scrollTop(0);
-        }if(current_page == "scores"){
-            $("body").scrollTop(2*$(window).height());
-        };
-
-        minHeight = Math.round((59 / $(".gameFrame").height()) * 100);
-        if(!growIntervall && !unFillIntervall){
-            $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+minHeight+"%"+", #87cefa "+minHeight+"%"+", #87cefa 100%)");
-        };
-    });
-
     // BTN
 
     $(".mainFrame_btn").on("click", function(e){
@@ -203,6 +227,19 @@ function highEnough(){
 
         return 125 + randomVal[randomInd];
     };
+
+    function goalSpawn(HErecovery = false){
+        $(".gameFrame_gameGoal").css("height", goalSize + "px");
+        $(".gameFrame_gameGoal").css('top', goalRandomHeight + "px");
+
+        if(!HErecovery){
+            $(".gameFrame_gameGoal").animate({
+                opacity: 1
+            }, goal_fadeInDelay);
+        }else{
+            $(".gameFrame_gameGoal").css('opacity', '1');
+        };
+    };
         
     function startParty(replay=false){
         current_page = "play";
@@ -217,21 +254,24 @@ function highEnough(){
             }, 1);
         };
 
+        if(!HErecovery){HErecovery = HErecovery_init()};
+
         gameIntervall = setInterval(() => {
             if(gameReady && nextRound && !gameover){
                 round += 1;
                 nextRound = false;
                 isAnimationOver = true;
                 hasBeenReleased = false;
-                
-                let randomHeight = getGoalPos();
 
-                $(".gameFrame_gameGoal").css('top', randomHeight + "px");
-                $(".gameFrame_gameGoal").animate({
-                    opacity: 1
-                }, goal_fadeInDelay);
+                goalRandomHeight = getGoalPos();
+
+                if(round > 0 && score > 0){
+                    update_HErecovery();
+                };
+
+                goalSpawn();
             };
-        }, 1);
+        }, 100);
     };
 
     function gameStart(){
@@ -262,7 +302,13 @@ function highEnough(){
 
         if(barTop >= goalUpperBound && barTop <= goalLowerBound){
             won = true;
+
             combo += 1;
+            $(".gameFrame_combo").text('COMBO : ' + combo.toString());
+
+            if(combo%comboGoal == 0){
+                tilt($('.gameFrame_combo').eq(0), 30, 1225, [-0.5, -0.5], 300);
+            };
 
             target = $(".gameFrame_winMsg, .gameFrame_scoreMsg");
             target_shadow = $(".gameFrame_winMsg_shadow, .gameFrame_scoreMsg_shadow");
@@ -278,7 +324,7 @@ function highEnough(){
 
                     $(".gameFrame_winMsg_shadow, .gameFrame_winMsg").text("COMBO x"+combo);
                     $('.gameFrame_scoreMsg_shadow, .gameFrame_scoreMsg').html('+<img src="./resources/imgs/heartFull1.svg" class="gameFrame_heartText" alt="">');
-                }else if((combo == comboGoal && maxhearts == 3 || combo == 2*comboGoal && maxhearts == 4) && maxhearts == hearts){
+                }else if((combo >= comboGoal && maxhearts == 3 || combo >= 2*comboGoal && maxhearts == 4) && maxhearts == hearts){
                     hearts += 1;
                     maxhearts += 1;
 
@@ -307,11 +353,18 @@ function highEnough(){
             $(".gameFrame_score").text('SCORE : ' + score.toString());
 
             if(score%10 == 0 && $(".gameFrame_gameGoal").height() > 17.5){
-                $(".gameFrame_gameGoal").css("height", ($(".gameFrame_gameGoal").height() - 2.5) + "px");
+                goalSize -= 2.5;
                 tilt($('.gameFrame_score').eq(0), 30, 1225, [-0.5, -0.5], 300);
             };
         }else{
+            if(combo > maxCombo){
+                maxCombo = combo;
+            };
+
             combo = 0;
+
+            $(".gameFrame_combo").text('COMBO : ' + combo.toString());
+
             target = $(".gameFrame_winMsg");
             target_shadow = $(".gameFrame_winMsg_shadow");
 
@@ -364,24 +417,36 @@ function highEnough(){
         endOfRound();
     });
 
-    function gameOver(){
+    function gameOver(HErecovery = false){
         gameover = true;
         nextRound = false;
 
-        $('.gameFrame_gameOverWrapper').animate({
-            opacity : 1
-        }, text_fadeInDelay, function(){
-            $('.gameFrame_gameOverWrapper').css('pointer-events', 'all')
-        });
-        
         $(".gameFrame_winMsg_shadow, .gameFrame_winMsg").text("GAME OVER !");
-        $(".gameFrame_winMsg").animate({
-            opacity: 1
-        }, text_fadeInDelay);
         
-        $(".gameFrame_winMsg_shadow").animate({
-            opacity: .3
-        }, text_fadeInDelay);
+        if(HErecovery){
+            $('.gameFrame_gameOverWrapper').css("opacity", "1");
+            $(".gameFrame_winMsg").css("opacity", "1");
+            $(".gameFrame_winMsg_shadow").css("opacity", ".3");
+            $('.gameFrame_gameOverWrapper').css('pointer-events', 'all');
+        }else{
+            update_HErecovery();
+
+            $('.gameFrame_gameOverWrapper').animate({
+                opacity : 1
+            }, text_fadeInDelay, function(){
+                $('.gameFrame_gameOverWrapper').css('pointer-events', 'all');
+            });
+            
+            $(".gameFrame_winMsg").animate({
+                opacity: 1
+            }, text_fadeInDelay);
+            
+            $(".gameFrame_winMsg_shadow").animate({
+                opacity: .3
+            }, text_fadeInDelay);
+        };
+
+        $('#player').val(lastName);
     };
 
     function gameReset(){
@@ -392,17 +457,20 @@ function highEnough(){
         }, text_fadeOutDelay);
 
         $(".gameFrame_gameGoal").css("height", initSizeText);
-
-        hearts = 3;
         $('.gameFrame_heart').slice(3).remove();
         
+        lastRoundPressed = 0;
         round = 0;
         score = 0;
         combo = 0;
 
+        maxhearts = 3;
+        hearts = 3;
+
+        goalSize = 35;
+
         isAnimationOver = false;
         hasBeenReleased = true;
-        lastRoundPressed = 0;
 
         $(".gameFrame_score").text('SCORE : ' + score.toString());
 
@@ -415,15 +483,20 @@ function highEnough(){
         }, text_fadeOutDelay);
 
         setTimeout(() => {
-            gameover = false
-            nextRound = true
+            gameover = false;
+            gameReady = false;
+            nextRound = true;
         }, Math.max(text_fadeOutDelay, goal_fadeInDelay));
 
         $(".gameFrame_heart").attr("src", "./resources/imgs/heartFull1.svg");
+
+        HErecovery = false;
+        HErecovery_save(HErecovery);
     };
 
     function saveScore(){
-        scores.push([$('#player').val(), score]);
+        let name = $('#player').val() == '' ? 'Player' : $('#player').val();
+        scores.push([name, score, maxCombo]);
         scores.sort((a, b) => b[1] - a[1]);
 
         scores = scores.slice(0, 6);
@@ -467,10 +540,8 @@ function highEnough(){
     });
 
     var lastRoundPressed = round;
-    
-    $(document).on("mousedown touchstart", function(e){
-        if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 || paused || !isAnimationOver || !gameReady || gameover){return};
 
+    function mouseDownHandler(){
         if(unFillIntervall){
             clearInterval(unFillIntervall)
             unFillIntervall = false
@@ -491,12 +562,20 @@ function highEnough(){
                 $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+height+"%, #87cefa "+height+"%, #87cefa 100%)")
             };
         }, 1);
+    };
+
+    function mouseUpHandler(){
+        releasePress($(".gameFrame")[0]);
+    };
+    
+    $(document).on("mousedown touchstart", function(e){
+        if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 || paused || !isAnimationOver || !gameReady || gameover){return};
+        mouseDownHandler();
     });
 
     $(document).on("mouseup touchend", function(e){
         if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 || paused || lastRoundPressed != round || hasBeenReleased || isAnimationOver || !gameReady || gameover){return};
-        
-        releasePress($(".gameFrame")[0]);
+        mouseUpHandler();
     });
 
     function releasePress(item){
@@ -580,21 +659,22 @@ function highEnough(){
             $("body").scrollTop($("body").scrollTop() + step);
         }, 1);
 
-        $(".rank_col, .name_col, .score_col").find(".scoreFrame_columnText").remove();
-
-        let data = scores;
+        $(".scoreFrame_columnText:not(.columnHeader)").remove();
 
         if(scores.length == 0){
             $('.scoreFrame_EmptyMsg').css("display", "inline-block");
         }else{
             $('.scoreFrame_EmptyMsg').css("display", "none");
-            for(let i=0; i<data.length; i++){
+            for(let i=0; i<scores.length; i++){
                 $(".rank_col").append('<span class="scoreFrame_columnText">'+(i+1).toString()+'</span>');
-                $(".name_col").append('<span class="scoreFrame_columnText">'+data[i][0]+'</span>');
-                $(".score_col").append('<span class="scoreFrame_columnText">'+data[i][1]+'</span>');
+                $(".name_col").append('<span class="scoreFrame_columnText">'+scores[i][0]+'</span>');
+                $(".score_col").append('<span class="scoreFrame_columnText">'+scores[i][1]+'</span>');
+                $(".combo_col").append('<span class="scoreFrame_columnText">'+scores[i][2]+'</span>');
             };
         };
     };
+
+    // BACKER
 
     function goBack(platform){
         if(current_page == "scores"){
@@ -626,6 +706,29 @@ function highEnough(){
         });
     };
 
+    // GRAPHIC UPDATE
+
+    if(platform == "Web"){
+        document.oncontextmenu = function(){
+            return false;
+        };
+    };
+
+    $(window).on('resize', function(){
+        if(current_page == "landing"){
+            $("body").scrollTop($(window).height());
+        }if(current_page == "play"){
+            $("body").scrollTop(0);
+        }if(current_page == "scores"){
+            $("body").scrollTop(2*$(window).height());
+        };
+
+        minHeight = Math.round((59 / $(".gameFrame").height()) * 100);
+        if(!growIntervall && !unFillIntervall){
+            $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+minHeight+"%"+", #87cefa "+minHeight+"%"+", #87cefa 100%)");
+        };
+    });
+    
     const setVh = () => {
         const vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -633,6 +736,70 @@ function highEnough(){
     
     window.addEventListener('resize', setVh);
     setVh();
+
+    // KEYS
+
+    $(document).on("keyup", function(e){
+        if(e.which === 27){
+            if(current_page == "play"){
+                goBack(platform);
+            }else{
+                goBack(platform);
+            };
+        }else if(e.which === 32 && !(paused || lastRoundPressed != round || hasBeenReleased || isAnimationOver || !gameReady || gameover)){
+            mouseUpHandler();
+        };
+    });
+
+    $(document).on("keydown", function(e){
+        if(e.which === 32 && !(paused || !isAnimationOver || !gameReady || gameover)){
+            mouseDownHandler();
+        };
+    });
+
+    // START
+
+    if(HErecovery){
+        current_page = "play";
+
+        replay = true;
+        gameReady = true;
+        nextRound = false;
+
+        gameover = HErecovery["gameover"];
+        combo = HErecovery["combo"];
+        maxCombo = HErecovery["maxCombo"];
+        score = HErecovery["score"];
+
+        $(".gameFrame_combo").text('COMBO : ' + combo.toString());
+        $(".gameFrame_score").text('SCORE : ' + score.toString());
+
+        hearts = !gameover ? HErecovery["hearts"] : 0;
+        maxhearts = HErecovery["maxhearts"];
+
+        goalRandomHeight = HErecovery["goalHeight"];
+        goalSize = HErecovery["goalSize"];
+
+        $("body").scrollTop(0);
+        for(let i = 0; i < maxhearts - 3; i++){
+            let additionalHeart = $('<img src="./resources/imgs/heartFull1.svg" class="gameFrame_heart" alt="">');
+            $(additionalHeart).css({
+                right: $('.gameFrame_heart').last().getStyleValue('right') + 30 + "px"
+            });
+
+            $('.gameFrame').append($(additionalHeart));
+        };
+
+        $(".gameFrame_heart").filter((id, _) => $(".gameFrame_heart").length - id > hearts).attr("src", "./resources/imgs/heartEmpty1.svg");
+
+        if(gameover){
+            gameOver(true);
+        }else{
+            goalSpawn(true);
+        };
+
+        startParty();
+    };
 };
 
 //RUN
