@@ -113,6 +113,17 @@ body::-webkit-scrollbar{
     color: white;
 }
 
+.gameFrame_combo{
+    position: absolute;
+
+    top: 42px;
+    left: 15px;
+
+    font-size: 35px;
+
+    color: white;
+}
+
 .gameFrame_pause{
     display: flex;
     position: absolute;
@@ -172,7 +183,12 @@ body::-webkit-scrollbar{
     border: white 4px solid;
     outline: none;
 
-    font-size: 50px;
+    font-size: 50px; 
+}
+
+#player::placeholder{
+    color: white;
+    opacity: .6;
 }
 
 .gameFrame_gameOver_secondLine{
@@ -463,7 +479,7 @@ body::-webkit-scrollbar{
     gap: 30px;
 
     width: 70vw;
-    max-width: 252px;
+    max-width: 350px;
     max-height: 70vh;
 }
 
@@ -490,7 +506,6 @@ body::-webkit-scrollbar{
 }
 
 .scoreFrame_EmptyMsg{
-    margin-top: -15px;
     align-self: center;
 
     font-size: 35px;
@@ -508,7 +523,14 @@ body::-webkit-scrollbar{
     flex-direction: column;
     align-items: center;
 
-    gap: 10px;
+    flex-grow: 0;
+    flex-shrink: 0;
+
+    row-gap: 10px;
+}
+
+.scoreFrame_columnText:nth-child(2){
+    margin-top: 20px;
 }
 
 .scoreFrame_columnText{
@@ -517,17 +539,20 @@ body::-webkit-scrollbar{
 }
 
 .rank_col{
-    width: 15%;
+    width: 12%;
 }
 
 .name_col{
-    width: 40%;
+    width: 31%;
 }
 
 .score_col{
-    width: 30%;
+    width: 25%;
 }
 
+.combo_col{
+    width: 22%;
+}
 
 .mainFrame{
     background: rgb(135,206,250);
