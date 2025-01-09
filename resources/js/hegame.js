@@ -42,7 +42,7 @@ function highEnough(){
     const text_fadeOutDelay = 350;
     const text_fadePauseDelay = 650;
     
-    const minHeight = 25 + 35; // heartsize + padding
+    var minHeight = 25 + 35; // heartsize + padding
     var lastName = '';
 
     // GET DATA
@@ -259,6 +259,8 @@ function highEnough(){
     var playerLimit = false;
 
     function getGoalPos(){
+        let baseValue = !isIos ? 125 : 140;
+        
         let allZone = 0.5 * $(window).height();
         let deadZone = allZone * 0.3;
         let safeZone = allZone - deadZone;
@@ -266,7 +268,7 @@ function highEnough(){
         let randomVal = [Math.random(0, 1)*deadZone, deadZone + Math.random(0, 1)*safeZone, deadZone + Math.random(0, 1)*safeZone, deadZone + Math.random(0, 1)*safeZone, deadZone + Math.random(0, 1)*safeZone];
         let randomInd = Math.round(Math.random(0, 1)*(randomVal.length - 1));
 
-        return 125 + randomVal[randomInd];
+        return baseValue + randomVal[randomInd];
     };
 
     function goalSpawn(HErecovery = false){
@@ -400,6 +402,7 @@ function highEnough(){
                     let additionalHeart = $('<img src="./resources/imgs/heartFull1.svg" class="gameFrame_heart" alt="">');
                     $(additionalHeart).css({
                         right: $('.gameFrame_heart').last().getStyleValue('right') + 30 + "px",
+                        bottom: !isIos ? "15px" : "30px",
                         opacity: 0
                     });
 
@@ -793,6 +796,7 @@ function highEnough(){
     };
 
     function resizeHandler(){
+        IOSfix();
         setVh();
 
         canvas.width = window.innerWidth;
@@ -805,6 +809,14 @@ function highEnough(){
             $("body").scrollTop(0);
         }if(current_page == "scores"){
             $("body").scrollTop(2*$(window).height());
+        };
+    };
+
+    function IOSfix(){
+        if(isIos){
+            $('.gameFrame_heart').css('bottom', '30px');
+            minHeight += 15;
+            height = minHeight;
         };
     };
 
@@ -867,7 +879,8 @@ function highEnough(){
         for(let i = 0; i < maxhearts - 3; i++){
             let additionalHeart = $('<img src="./resources/imgs/heartFull1.svg" class="gameFrame_heart" alt="">');
             $(additionalHeart).css({
-                right: $('.gameFrame_heart').last().getStyleValue('right') + 30 + "px"
+                right: $('.gameFrame_heart').last().getStyleValue('right') + 30 + "px",
+                bottom: !isIos ? "15px" : "30px"
             });
 
             $('.gameFrame').append($(additionalHeart));
