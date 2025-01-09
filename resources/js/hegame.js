@@ -620,7 +620,7 @@ function highEnough(){
     var firstRoundDown = true;
     var firstRoundUp = true;
 
-    const speed = 220;
+    const speed = 750;
 
     function setCanvaHeight(height) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -635,7 +635,7 @@ function highEnough(){
     function growSquareAnimation(){
         if (!isGrowing) return;
 
-        let add = (3 * speed) / 120;
+        let add = (speed) / 120;
 
         if(height + add >= playerLimit + 15){
             releasePress();
@@ -651,7 +651,7 @@ function highEnough(){
     function unGrowSquareAnimation(){
         if (!isUngrowing) return;
 
-        let substract = (7.4 * speed) / 120;
+        let substract = (2.5 * speed) / 120;
 
         if(height - substract <= minHeight){
             height = minHeight;
