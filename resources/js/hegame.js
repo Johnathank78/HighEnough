@@ -10,7 +10,10 @@ function highEnough(){
 
     const platform = "Web";
     const isMobile = /Mobi/.test(navigator.userAgent);
+    const isIos = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
+    console.log(isIos);
+    
     var current_page = "landing";
 
     var HErecovery = HErecovery_read();
@@ -515,7 +518,7 @@ function highEnough(){
     function gameReset(){
         clearInterval(gameIntervall); 
         gameIntervall = false
-        
+
         $('.gameFrame_gameOverWrapper').css('pointer-events', 'none');
         $('.gameFrame_gameOverWrapper').animate({
             opacity : 0
