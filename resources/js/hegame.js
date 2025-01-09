@@ -38,7 +38,7 @@ function highEnough(){
     const text_fadeOutDelay = 350;
     const text_fadePauseDelay = 650;
     
-    const minHeight = $(".gameFrame_heart").getStyleValue('height') + 35;
+    const minHeight = 25 + 35; // heartsize + padding
     var lastName = '';
 
     // GET DATA
@@ -513,6 +513,9 @@ function highEnough(){
     };
 
     function gameReset(){
+        clearInterval(gameIntervall); 
+        gameIntervall = false
+        
         $('.gameFrame_gameOverWrapper').css('pointer-events', 'none');
         $('.gameFrame_gameOverWrapper').animate({
             opacity : 0
@@ -523,6 +526,7 @@ function highEnough(){
         $('.gameFrame_heart').slice(3).remove();
         $(".gameFrame_heart").attr("src", "./resources/imgs/heartFull1.svg");
         
+        finalHeight = 0;
         round = 0;
 
         score = 0;
