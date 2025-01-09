@@ -12,9 +12,6 @@ function highEnough(){
     const isMobile = /Mobi/.test(navigator.userAgent);
     const isIos = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    $('.mainFrame_Title').text(isIos);
-    $('.mainFrame_TitleShadow').text(isIos);
-
     var current_page = "landing";
 
     var HErecovery = HErecovery_read();
@@ -260,7 +257,7 @@ function highEnough(){
 
     function getGoalPos(){
         let baseValue = !isIos ? 125 : 140;
-        
+
         let allZone = 0.5 * $(window).height();
         let deadZone = allZone * 0.3;
         let safeZone = allZone - deadZone;
