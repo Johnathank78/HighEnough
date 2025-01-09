@@ -276,7 +276,7 @@ function highEnough(){
             $(".gameFrame_gameGoal").css('opacity', '1');
         };
 
-        playerLimit = Math.abs($(window).innerHeight() - goalRandomHeight + 15);
+        playerLimit = Math.floor(Math.abs($(window).innerHeight() - goalRandomHeight));
     };
 
     // PARTY
@@ -290,8 +290,9 @@ function highEnough(){
     
     var combo = 0;
     var maxCombo = 0;
-    const comboGoal = 5;
+    const comboGoal = 3;
 
+    var lastRoundPressed = 0;
     var round = 0;
     var score = 0;
 
@@ -617,7 +618,7 @@ function highEnough(){
     var firstRoundDown = true;
     var firstRoundUp = true;
 
-    const speed = 230;
+    const speed = 250;
 
     function setCanvaHeight(height) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -632,11 +633,13 @@ function highEnough(){
     function growSquareAnimation(){
         if (!isGrowing) return;
 
-        height += (3 * speed) / 120;
+        let add = (3 * speed) / 120;
 
-        if(height >= playerLimit){
+        if(height + add >= playerLimit + 15){
             releasePress();
             return;
+        }else{
+            height += add; 
         };
 
         setCanvaHeight(height);
@@ -646,7 +649,7 @@ function highEnough(){
     function unGrowSquareAnimation(){
         if (!isUngrowing) return;
 
-        let substract = (7 * speed) / 120;
+        let substract = (8 * speed) / 120;
 
         if(height - substract <= minHeight){
             height = minHeight;
@@ -669,6 +672,8 @@ function highEnough(){
         isUngrowing = false;
 
         firstRoundDown = false;
+        lastRoundPressed = round;
+        
         growSquareAnimation();
     };
 
@@ -681,7 +686,7 @@ function highEnough(){
         isUngrowing = true;
 
         firstRoundUp = false;
-        finalHeight = height;
+        finalHeight = Math.floor(height);
 
         unGrowSquareAnimation();
         endOfRound();
@@ -690,12 +695,24 @@ function highEnough(){
     };
 
     $(".gameFrame").on("mousedown touchstart", function(e){
-        if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 || paused || !gameReady || gameover || !firstRoundDown){return};
+        if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 
+        || paused 
+        || !gameReady 
+        || gameover 
+        || !firstRoundDown
+    ){return};
         mouseDownHandler();
     });
 
     $(".gameFrame").on("mouseup touchend", function(e){
-        if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 || paused || !gameReady || gameover || !firstRoundUp || firstRoundDown){return};
+        if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 
+        || paused 
+        || !gameReady 
+        || gameover 
+        || !firstRoundUp 
+        || firstRoundDown
+        || round != lastRoundPressed
+    ){return};
         mouseUpHandler();
     });
 
