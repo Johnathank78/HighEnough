@@ -79,9 +79,11 @@
         </div>
 
         <div class="gameFrame">
+            <canvas id="gameCanvas"></canvas>
             <div class="gameFrame_gameGoal"></div>
             
             <span class="gameFrame_score text">Score : 0</span>
+            <span class="gameFrame_combo text">Combo : 0</span>
             <button class="gameFrame_pause"><span class="pauseText">| |</span></button>
 
             <span class="gameFrame_winMsg_shadow text">CRAP</span>
@@ -91,7 +93,7 @@
             <span class="gameFrame_scoreMsg text">+1</span>
 
             <div class="gameFrame_gameOverWrapper">
-                <input type="text" value="Noemie" id="player">
+                <input type="text" value="" id="player" placeholder="Name">
                 <div class="gameFrame_gameOver_secondLine">
                     <div class="gameFrame_goBack"><span class="textPA">&lt</span></div>
                     <div class="gameFrame_playAgain"><span class="textPA">PLAY AGAIN</span></div>
@@ -150,25 +152,23 @@
             <div class="scoreFrame_wrapperAll">
                 <span class="scoreFrame_mainText">SCOREBOARD</span>
                 <div class="scoreFrame_wrapper scoreFrame_header">
-                    <div class="scoreFrame_column">
+                    
+                    <div class="scoreFrame_column rank_col">
                         <img src="./resources/imgs/crown.svg" alt="">
                     </div>
     
-                    <div class="scoreFrame_column">
-                        <span class="scoreFrame_columnText">Name</span>
+                    <div class="scoreFrame_column name_col">
+                        <span class="scoreFrame_columnText columnHeader">Name</span>
                     </div>
     
-                    <div class="scoreFrame_column">
-                        <span class="scoreFrame_columnText">Score</span>
+                    <div class="scoreFrame_column score_col">
+                        <span class="scoreFrame_columnText columnHeader">Score</span>
+                    </div>
+
+                    <div class="scoreFrame_column combo_col">
+                        <span class="scoreFrame_columnText columnHeader">Combo</span>
                     </div>
     
-                </div>
-                <div class="scoreFrame_wrapper">
-                    <div class="scoreFrame_column rank_col"></div>
-    
-                    <div class="scoreFrame_column name_col"></div>
-    
-                    <div class="scoreFrame_column score_col"></div>
                 </div>
                 <span class="scoreFrame_EmptyMsg">NO SCORES YET</span>
                 <div class="scoreFrame_wrapperDelim"></div>
