@@ -39,7 +39,6 @@ function highEnough(){
     const text_fadePauseDelay = 650;
     
     const minHeight = $(".gameFrame_heart").getStyleValue('height') + 30;
-
     var lastName = '';
 
     // GET DATA
@@ -729,6 +728,7 @@ function highEnough(){
         });
     
         $(".gameFrame").on("touchend", function(e){
+            $('.gameFrame_score').text(round.toString() + " : " + lastRoundPressed.toString());
             if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 
                 || paused 
                 || !gameReady || gameover 
@@ -786,6 +786,12 @@ function highEnough(){
     };
 
     $(window).on('resize', function(){
+        setVh();
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        setCanvaHeight(height);
+
         if(current_page == "landing"){
             $("body").scrollTop($(window).height());
         }if(current_page == "play"){
@@ -799,9 +805,6 @@ function highEnough(){
         const vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty('--vh', `${vh}px`);
     };
-    
-    window.addEventListener('resize', setVh);
-    setVh();
 
     // KEYS
 
@@ -825,6 +828,7 @@ function highEnough(){
 
     // START
 
+    setVh();
     $("body").scrollTop($(window).height());
     setCanvaHeight(minHeight);
 
