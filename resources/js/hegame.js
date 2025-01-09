@@ -729,7 +729,6 @@ function highEnough(){
         });
     
         $(".gameFrame").on("touchend", function(e){
-            $('.gameFrame_score').text(round.toString() + " : " + lastRoundPressed.toString());
             if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 
                 || paused 
                 || !gameReady || gameover 
