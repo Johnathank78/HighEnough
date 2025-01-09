@@ -11,6 +11,9 @@ function highEnough(){
     const platform = "Web";
     var current_page = "landing";
 
+    const mouseDown = 'touchstart' in window ? 'touchstart' : 'mousedown';
+    const mouseUp = 'touchend' in window ? 'touchend' : 'mouseup';
+
     var HErecovery = HErecovery_read();
     var scores = scores_read();
 
@@ -694,7 +697,7 @@ function highEnough(){
         if(platform == "Mobile"){Haptics.impact({ style: ImpactStyle.Medium })};
     };
 
-    $(".gameFrame").on("mousedown touchstart", function(e){
+    $(".gameFrame").on(mouseDown, function(e){
         if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 
             || paused 
             || !gameReady || gameover 
@@ -704,7 +707,7 @@ function highEnough(){
         mouseDownHandler();
     });
 
-    $(".gameFrame").on("mouseup touchend", function(e){
+    $(".gameFrame").on(mouseUp, function(e){
         $('.gameFrame_score').text(round.toString() + " : " + lastRoundPressed.toString());
         if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 
             || paused 
