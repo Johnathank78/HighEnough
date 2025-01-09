@@ -294,7 +294,9 @@ function highEnough(){
     
     var combo = 0;
     var maxCombo = 0;
-    const comboGoal = 3;
+    
+    const comboGoal = 5;
+    const maximumHeartNumber = 6
 
     var lastRoundPressed = 0;
     var round = 0;
@@ -389,7 +391,7 @@ function highEnough(){
 
                     $(".gameFrame_winMsg_shadow, .gameFrame_winMsg").text("COMBO x"+combo);
                     $('.gameFrame_scoreMsg_shadow, .gameFrame_scoreMsg').html('+<img src="./resources/imgs/heartFull1.svg" class="gameFrame_heartText" alt="">');
-                }else if(combo >= (maxhearts - 2)*comboGoal && maxhearts == hearts && maxhearts < 10){
+                }else if(combo >= (maxhearts - 2)*comboGoal && maxhearts == hearts && maxhearts < maximumHeartNumber){
                     hearts += 1;
                     maxhearts += 1;
                     
