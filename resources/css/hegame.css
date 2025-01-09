@@ -36,6 +36,10 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+.imgSet{
+    display: none;
+}
+
 title {
     display: none;
 }
