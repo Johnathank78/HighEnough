@@ -38,7 +38,7 @@ function highEnough(){
     const text_fadeOutDelay = 350;
     const text_fadePauseDelay = 650;
     
-    const minHeight = $(".gameFrame_heart").getStyleValue('height') + 30;
+    const minHeight = $(".gameFrame_heart").getStyleValue('height') + 35;
     var lastName = '';
 
     // GET DATA
@@ -728,7 +728,6 @@ function highEnough(){
         });
     
         $(".gameFrame").on("touchend", function(e){
-            $('.gameFrame_score').text(round.toString() + " : " + lastRoundPressed.toString());
             if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 
                 || paused 
                 || !gameReady || gameover 
@@ -785,7 +784,7 @@ function highEnough(){
         };
     };
 
-    $(window).on('resize', function(){
+    function resizeHandler(){
         setVh();
 
         canvas.width = window.innerWidth;
@@ -799,6 +798,10 @@ function highEnough(){
         }if(current_page == "scores"){
             $("body").scrollTop(2*$(window).height());
         };
+    };
+
+    $(window).on('resize', function(){
+        resizeHandler();
     });
     
     const setVh = () => {
@@ -828,9 +831,8 @@ function highEnough(){
 
     // START
 
-    setVh();
     $("body").scrollTop($(window).height());
-    setCanvaHeight(minHeight);
+    resizeHandler();
 
     if(HErecovery){
         current_page = "play";
