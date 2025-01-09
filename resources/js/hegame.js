@@ -795,11 +795,6 @@ function highEnough(){
         }if(current_page == "scores"){
             $("body").scrollTop(2*$(window).height());
         };
-
-        minHeight = Math.round((59 / $(".gameFrame").height()) * 100);
-        if(!growIntervall && !unFillIntervall){
-            $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+minHeight+"%"+", #87cefa "+minHeight+"%"+", #87cefa 100%)");
-        };
     });
     
     const setVh = () => {
