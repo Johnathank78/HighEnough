@@ -416,7 +416,7 @@ function highEnough(){
             };
 
             score += 1;
-            //$(".gameFrame_score").text('SCORE : ' + score.toString());
+            $(".gameFrame_score").text('SCORE : ' + score.toString());
 
             if(score%10 == 0 && $(".gameFrame_gameGoal").height() > 17.5){
                 goalSize -= 2.5;
@@ -708,7 +708,6 @@ function highEnough(){
         });
     
         $(".gameFrame").on("mouseup", function(e){
-            $('.gameFrame_score').text(round.toString() + " : " + lastRoundPressed.toString());
             if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 
                 || paused 
                 || !gameReady || gameover 
