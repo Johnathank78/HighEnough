@@ -12,8 +12,9 @@ function highEnough(){
     const isMobile = /Mobi/.test(navigator.userAgent);
     const isIos = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    console.log(isIos);
-    
+    $('.mainFrame_Title').text(isIos);
+    $('.mainFrame_TitleShadow').text(isIos);
+
     var current_page = "landing";
 
     var HErecovery = HErecovery_read();
