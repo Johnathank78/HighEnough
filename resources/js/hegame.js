@@ -618,7 +618,7 @@ function highEnough(){
     var firstRoundDown = true;
     var firstRoundUp = true;
 
-    const speed = 250;
+    const speed = 220;
 
     function setCanvaHeight(height) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -649,7 +649,7 @@ function highEnough(){
     function unGrowSquareAnimation(){
         if (!isUngrowing) return;
 
-        let substract = (8 * speed) / 120;
+        let substract = (7.4 * speed) / 120;
 
         if(height - substract <= minHeight){
             height = minHeight;
@@ -673,7 +673,7 @@ function highEnough(){
 
         firstRoundDown = false;
         lastRoundPressed = round;
-        
+
         growSquareAnimation();
     };
 
@@ -696,23 +696,22 @@ function highEnough(){
 
     $(".gameFrame").on("mousedown touchstart", function(e){
         if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 
-        || paused 
-        || !gameReady 
-        || gameover 
-        || !firstRoundDown
-    ){return};
+            || paused 
+            || !gameReady || gameover 
+            || !firstRoundDown || !firstRoundUp
+        ){return};
+
         mouseDownHandler();
     });
 
     $(".gameFrame").on("mouseup touchend", function(e){
         if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 
-        || paused 
-        || !gameReady 
-        || gameover 
-        || !firstRoundUp 
-        || firstRoundDown
-        || round != lastRoundPressed
-    ){return};
+            || paused 
+            || !gameReady || gameover 
+            || !firstRoundUp || firstRoundDown
+            || round != lastRoundPressed
+        ){return};
+
         mouseUpHandler();
     });
 
