@@ -29,7 +29,6 @@ function highEnough(){
         "TRAGIC", "BUSTED", "NOPE", "OUCHIE", "MISS", "WRONG MOVE", 
         "TOUGH BREAK", "DARN"
     ];
-<<<<<<< HEAD
 
     // GLOBAL VARS 
 
@@ -40,56 +39,6 @@ function highEnough(){
     const minHeight = $(".gameFrame_heart").getStyleValue('height') + 30;
 
     var lastName = '';
-=======
-
-    const platform = "Web";
-    var current_page = "landing";
-
-    var HErecovery = HErecovery_read();
-    var scores = scores_read();
-
-    var goalRandomHeight = false;
-    var goalSize = 35;
-    var goal_fadeInDelay = 150;
-    var goal_fadeOutDelay = 150;
-
-    var text_fadeInDelay = 500;
-    var text_fadeOutDelay = 350;
-    var text_fadePauseDelay = 650;
-
-    var gameReady = false;
-    var nextRound = true;
-    var gameover = false;
-
-    var combo = 0;
-    var maxCombo = 0;
-    var round = 0;
-    var score = 0;
-
-    var maxhearts = 3;
-    var hearts = 3;
-
-    var initSizeText = $('.gameFrame_gameGoal').css('height');
-
-    var gameIntervall = false;
-    var minHeight = Math.round((59 / $(".gameFrame").height()) * 100);
-
-    $("body").scrollTop($(window).height())
-    $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+minHeight+"%"+", #87cefa "+minHeight+"%"+", #87cefa 100%)");
-
-    var paused = false;
-    var isAnimationOver = true;
-    var hasBeenReleased = true;
-
-    var growIntervall = false;
-    var unFillIntervall = false;
-    
-    var height = minHeight;
-    var speed = 1200;
-    var finalHeight = 0;
-
-    var comboGoal = 3;
->>>>>>> 3e3f0fb6b48612c14d49f376d2f5e797c10a5a80
 
     // GET DATA
     
@@ -222,7 +171,6 @@ function highEnough(){
             }, tiltPause);
         });
     };
-<<<<<<< HEAD
     
     function goBack(platform){
         if(current_page == "scores"){
@@ -255,10 +203,6 @@ function highEnough(){
     };
 
     // NAVIGATION
-=======
-
-    // BTN
->>>>>>> 3e3f0fb6b48612c14d49f376d2f5e797c10a5a80
 
     $(".mainFrame_btn").on("click", function(e){
         if($(this).hasClass("play")){
@@ -331,7 +275,6 @@ function highEnough(){
         }else{
             $(".gameFrame_gameGoal").css('opacity', '1');
         };
-<<<<<<< HEAD
 
         playerLimit = Math.abs($(window).innerHeight() - goalRandomHeight + 15);
     };
@@ -356,9 +299,6 @@ function highEnough(){
     var finalHeight = 0;
 
     var gameIntervall = false;
-=======
-    };
->>>>>>> 3e3f0fb6b48612c14d49f376d2f5e797c10a5a80
         
     function startParty(replay=false){
         current_page = "play";
@@ -380,16 +320,10 @@ function highEnough(){
 
                 round += 1;
                 nextRound = false;
-<<<<<<< HEAD
 
                 firstRoundDown = true;
                 firstRoundUp = true;
 
-=======
-                isAnimationOver = true;
-                hasBeenReleased = false;
-
->>>>>>> 3e3f0fb6b48612c14d49f376d2f5e797c10a5a80
                 goalRandomHeight = getGoalPos();
 
                 if(round > 0 && score > 0){
@@ -450,11 +384,7 @@ function highEnough(){
 
                     $(".gameFrame_winMsg_shadow, .gameFrame_winMsg").text("COMBO x"+combo);
                     $('.gameFrame_scoreMsg_shadow, .gameFrame_scoreMsg').html('+<img src="./resources/imgs/heartFull1.svg" class="gameFrame_heartText" alt="">');
-<<<<<<< HEAD
                 }else if(combo >= (maxhearts - 2)*comboGoal && maxhearts == hearts && maxhearts < 10){
-=======
-                }else if((combo >= comboGoal && maxhearts == 3 || combo >= 2*comboGoal && maxhearts == 4) && maxhearts == hearts){
->>>>>>> 3e3f0fb6b48612c14d49f376d2f5e797c10a5a80
                     hearts += 1;
                     maxhearts += 1;
                     
@@ -586,16 +516,11 @@ function highEnough(){
             opacity : 0
         }, text_fadeOutDelay);
 
-<<<<<<< HEAD
         setCanvaHeight(minHeight);
 
-=======
-        $(".gameFrame_gameGoal").css("height", initSizeText);
->>>>>>> 3e3f0fb6b48612c14d49f376d2f5e797c10a5a80
         $('.gameFrame_heart').slice(3).remove();
         $(".gameFrame_heart").attr("src", "./resources/imgs/heartFull1.svg");
         
-        lastRoundPressed = 0;
         round = 0;
 
         score = 0;
@@ -607,13 +532,8 @@ function highEnough(){
 
         goalSize = 35;
 
-<<<<<<< HEAD
         firstRoundDown = false;
         firstRoundUp = false;
-=======
-        isAnimationOver = false;
-        hasBeenReleased = true;
->>>>>>> 3e3f0fb6b48612c14d49f376d2f5e797c10a5a80
 
         $(".gameFrame_score").text('SCORE : ' + score.toString());
         $(".gameFrame_combo").text('COMBO : ' + combo.toString());
@@ -632,23 +552,13 @@ function highEnough(){
             nextRound = true;
         }, Math.max(text_fadeOutDelay, goal_fadeInDelay));
 
-<<<<<<< HEAD
-=======
-        $(".gameFrame_heart").attr("src", "./resources/imgs/heartFull1.svg");
-
->>>>>>> 3e3f0fb6b48612c14d49f376d2f5e797c10a5a80
         HErecovery = false;
         HErecovery_save(HErecovery);
     };
 
     function saveScore(){
-<<<<<<< HEAD
         lastName = $('#player').val() == '' ? 'Player' : $('#player').val();
         scores.push([lastName, score, maxCombo]);
-=======
-        let name = $('#player').val() == '' ? 'Player' : $('#player').val();
-        scores.push([name, score, maxCombo]);
->>>>>>> 3e3f0fb6b48612c14d49f376d2f5e797c10a5a80
         scores.sort((a, b) => b[1] - a[1]);
 
         scores = scores.slice(0, 6);
@@ -693,7 +603,6 @@ function highEnough(){
         $('.pauseScreen').css('display', 'none');
     });
 
-<<<<<<< HEAD
     // CANVA && PLAYER
 
     const canvas = document.getElementById("gameCanvas");
@@ -718,72 +627,6 @@ function highEnough(){
     
         ctx.fillStyle = "#2F2F2F"; // Dark gray
         ctx.fillRect(0, canvas.height - height, canvas.width, height);
-=======
-    var lastRoundPressed = round;
-
-    function mouseDownHandler(){
-        if(unFillIntervall){
-            clearInterval(unFillIntervall)
-            unFillIntervall = false
-        };
-        
-        isAnimationOver = false;
-        hasBeenReleased = false;
-        lastRoundPressed = round;
-
-        let step = (100/speed)*3;
-        
-        growIntervall = setInterval(() => {
-            if($(".gameFrame").height() - (height/100) * $(".gameFrame").height() < $(".gameFrame_gameGoal").offset().top - 30){
-                releasePress($(".gameFrame")[0])
-                return
-            }else{
-                height += step
-                $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+height+"%, #87cefa "+height+"%, #87cefa 100%)")
-            };
-        }, 1);
-    };
-
-    function mouseUpHandler(){
-        releasePress($(".gameFrame")[0]);
-    };
-    
-    $(document).on("mousedown touchstart", function(e){
-        if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 || paused || !isAnimationOver || !gameReady || gameover){return};
-        mouseDownHandler();
-    });
-
-    $(document).on("mouseup touchend", function(e){
-        if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 || paused || lastRoundPressed != round || hasBeenReleased || isAnimationOver || !gameReady || gameover){return};
-        mouseUpHandler();
-    });
-
-    function releasePress(item){
-        hasBeenReleased = true;
-
-        finalHeight = $(".gameFrame").height() - (height/100) * $(".gameFrame").height();
-        minHeight = Math.round((59 / $(".gameFrame").height()) * 100);
-        let step = (100/speed)*8;
-
-        unFillIntervall = setInterval(() => {
-            if(height < minHeight){
-                $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+minHeight+"%"+", #87cefa "+minHeight+"%"+", #87cefa 100%)");
-                clearInterval(unFillIntervall);
-                unFillIntervall = false;
-            }else{
-                height -= step;
-                $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+height+"%, #87cefa "+height+"%, #87cefa 100%)");
-            };
-        }, 1);
-
-        let event = new CustomEvent('dropped', { bubbles: true });
-        item.dispatchEvent(event);
-
-        if(platform == "Mobile"){Haptics.impact({ style: ImpactStyle.Medium })};
-
-        clearInterval(growIntervall);
-        growIntervall = false;
->>>>>>> 3e3f0fb6b48612c14d49f376d2f5e797c10a5a80
     };
 
     function growSquareAnimation(){
@@ -893,41 +736,6 @@ function highEnough(){
         };
     };
 
-<<<<<<< HEAD
-    // GRAPHIC UPDATE
-
-    if(platform == "Web"){
-        document.oncontextmenu = function(){
-            return false;
-=======
-    // BACKER
-
-    function goBack(platform){
-        if(current_page == "scores"){
-            $(".scoreFrame_leaveBtn").click();
-        }else if(current_page == "play"){
-            if(gameover){
-                $('.gameFrame_goBack').click();
-            }else{
-                $('.gameFrame_pause').click();
-            };
-        }else if(current_page == "landing" && platform == "Mobile"){
-            App.exitApp();
->>>>>>> 3e3f0fb6b48612c14d49f376d2f5e797c10a5a80
-        };
-    };
-
-    $(window).on('resize', function(){
-        if(current_page == "landing"){
-            $("body").scrollTop($(window).height());
-        }if(current_page == "play"){
-            $("body").scrollTop(0);
-        }if(current_page == "scores"){
-            $("body").scrollTop(2*$(window).height());
-        };
-
-<<<<<<< HEAD
-=======
     // GRAPHIC UPDATE
 
     if(platform == "Web"){
@@ -945,7 +753,6 @@ function highEnough(){
             $("body").scrollTop(2*$(window).height());
         };
 
->>>>>>> 3e3f0fb6b48612c14d49f376d2f5e797c10a5a80
         minHeight = Math.round((59 / $(".gameFrame").height()) * 100);
         if(!growIntervall && !unFillIntervall){
             $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+minHeight+"%"+", #87cefa "+minHeight+"%"+", #87cefa 100%)");
@@ -969,7 +776,6 @@ function highEnough(){
             }else{
                 goBack(platform);
             };
-<<<<<<< HEAD
         }else if(e.which === 32){
             $(".gameFrame").mouseup();
         };
@@ -978,27 +784,14 @@ function highEnough(){
     $(document).on("keydown", function(e){
         if(e.which === 32){
             $(".gameFrame").mousedown();
-=======
-        }else if(e.which === 32 && !(paused || lastRoundPressed != round || hasBeenReleased || isAnimationOver || !gameReady || gameover)){
-            mouseUpHandler();
-        };
-    });
-
-    $(document).on("keydown", function(e){
-        if(e.which === 32 && !(paused || !isAnimationOver || !gameReady || gameover)){
-            mouseDownHandler();
->>>>>>> 3e3f0fb6b48612c14d49f376d2f5e797c10a5a80
         };
     });
 
     // START
 
-<<<<<<< HEAD
     $("body").scrollTop($(window).height());
     setCanvaHeight(minHeight);
 
-=======
->>>>>>> 3e3f0fb6b48612c14d49f376d2f5e797c10a5a80
     if(HErecovery){
         current_page = "play";
 

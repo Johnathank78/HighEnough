@@ -126,17 +126,6 @@ body::-webkit-scrollbar{
     cursor: default;
 }
 
-.gameFrame_combo{
-    position: absolute;
-
-    top: 42px;
-    left: 15px;
-
-    font-size: 35px;
-
-    color: white;
-}
-
 .gameFrame_pause{
     display: flex;
     position: absolute;
