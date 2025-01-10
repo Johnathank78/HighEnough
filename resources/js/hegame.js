@@ -9,6 +9,9 @@ function highEnough(){
     // INIT
 
     const platform = "Web";
+    const isMobile = /Mobi/.test(navigator.userAgent);
+    const isIos = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
     var current_page = "landing";
 
     var HErecovery = HErecovery_read();
@@ -36,8 +39,7 @@ function highEnough(){
     const text_fadeOutDelay = 350;
     const text_fadePauseDelay = 650;
     
-    const minHeight = $(".gameFrame_heart").getStyleValue('height') + 30;
-
+    var minHeight = 25 + 35; // heartsize + padding
     var lastName = '';
 
     // GET DATA
@@ -254,6 +256,8 @@ function highEnough(){
     var playerLimit = false;
 
     function getGoalPos(){
+        let baseValue = !isIos ? 125 : 140;
+
         let allZone = 0.5 * $(window).height();
         let deadZone = allZone * 0.3;
         let safeZone = allZone - deadZone;
@@ -261,7 +265,7 @@ function highEnough(){
         let randomVal = [Math.random(0, 1)*deadZone, deadZone + Math.random(0, 1)*safeZone, deadZone + Math.random(0, 1)*safeZone, deadZone + Math.random(0, 1)*safeZone, deadZone + Math.random(0, 1)*safeZone];
         let randomInd = Math.round(Math.random(0, 1)*(randomVal.length - 1));
 
-        return 125 + randomVal[randomInd];
+        return baseValue + randomVal[randomInd];
     };
 
     function goalSpawn(HErecovery = false){
@@ -276,7 +280,7 @@ function highEnough(){
             $(".gameFrame_gameGoal").css('opacity', '1');
         };
 
-        playerLimit = Math.abs($(window).innerHeight() - goalRandomHeight + 15);
+        playerLimit = Math.floor(Math.abs($(window).innerHeight() - goalRandomHeight));
     };
 
     // PARTY
@@ -290,8 +294,11 @@ function highEnough(){
     
     var combo = 0;
     var maxCombo = 0;
+    
     const comboGoal = 5;
+    const maximumHeartNumber = 6
 
+    var lastRoundPressed = 0;
     var round = 0;
     var score = 0;
 
@@ -384,7 +391,7 @@ function highEnough(){
 
                     $(".gameFrame_winMsg_shadow, .gameFrame_winMsg").text("COMBO x"+combo);
                     $('.gameFrame_scoreMsg_shadow, .gameFrame_scoreMsg').html('+<img src="./resources/imgs/heartFull1.svg" class="gameFrame_heartText" alt="">');
-                }else if(combo >= (maxhearts - 2)*comboGoal && maxhearts == hearts && maxhearts < 10){
+                }else if(combo >= (maxhearts - 2)*comboGoal && maxhearts == hearts && maxhearts < maximumHeartNumber){
                     hearts += 1;
                     maxhearts += 1;
                     
@@ -394,6 +401,7 @@ function highEnough(){
                     let additionalHeart = $('<img src="./resources/imgs/heartFull1.svg" class="gameFrame_heart" alt="">');
                     $(additionalHeart).css({
                         right: $('.gameFrame_heart').last().getStyleValue('right') + 30 + "px",
+                        bottom: !isIos ? "15px" : "30px",
                         opacity: 0
                     });
 
@@ -511,6 +519,9 @@ function highEnough(){
     };
 
     function gameReset(){
+        clearInterval(gameIntervall); 
+        gameIntervall = false
+
         $('.gameFrame_gameOverWrapper').css('pointer-events', 'none');
         $('.gameFrame_gameOverWrapper').animate({
             opacity : 0
@@ -521,6 +532,7 @@ function highEnough(){
         $('.gameFrame_heart').slice(3).remove();
         $(".gameFrame_heart").attr("src", "./resources/imgs/heartFull1.svg");
         
+        finalHeight = 0;
         round = 0;
 
         score = 0;
@@ -617,7 +629,7 @@ function highEnough(){
     var firstRoundDown = true;
     var firstRoundUp = true;
 
-    const speed = 230;
+    const speed = 750;
 
     function setCanvaHeight(height) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -632,11 +644,13 @@ function highEnough(){
     function growSquareAnimation(){
         if (!isGrowing) return;
 
-        height += (3 * speed) / 120;
+        let add = (speed) / 120;
 
-        if(height >= playerLimit){
+        if(height + add >= playerLimit + 15){
             releasePress();
             return;
+        }else{
+            height += add; 
         };
 
         setCanvaHeight(height);
@@ -646,7 +660,7 @@ function highEnough(){
     function unGrowSquareAnimation(){
         if (!isUngrowing) return;
 
-        let substract = (7 * speed) / 120;
+        let substract = (2.5 * speed) / 120;
 
         if(height - substract <= minHeight){
             height = minHeight;
@@ -669,6 +683,8 @@ function highEnough(){
         isUngrowing = false;
 
         firstRoundDown = false;
+        lastRoundPressed = round;
+
         growSquareAnimation();
     };
 
@@ -681,7 +697,7 @@ function highEnough(){
         isUngrowing = true;
 
         firstRoundUp = false;
-        finalHeight = height;
+        finalHeight = Math.floor(height);
 
         unGrowSquareAnimation();
         endOfRound();
@@ -689,15 +705,51 @@ function highEnough(){
         if(platform == "Mobile"){Haptics.impact({ style: ImpactStyle.Medium })};
     };
 
-    $(".gameFrame").on("mousedown touchstart", function(e){
-        if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 || paused || !gameReady || gameover || !firstRoundDown){return};
-        mouseDownHandler();
-    });
-
-    $(".gameFrame").on("mouseup touchend", function(e){
-        if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 || paused || !gameReady || gameover || !firstRoundUp || firstRoundDown){return};
-        mouseUpHandler();
-    });
+    if(!isMobile){
+        $(".gameFrame").on("mousedown", function(e){
+            if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 
+                || paused 
+                || !gameReady || gameover 
+                || !firstRoundDown || !firstRoundUp
+                || e.clientY > $(window).innerHeight() - 50
+            ){return};
+    
+            mouseDownHandler();
+        });
+    
+        $(".gameFrame").on("mouseup", function(e){
+            if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 
+                || paused 
+                || !gameReady || gameover 
+                || !firstRoundUp || firstRoundDown
+                || round != lastRoundPressed
+            ){return};
+    
+            mouseUpHandler();
+        });
+    }else{
+        $(".gameFrame").on("touchstart", function(e){
+            if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 
+                || paused 
+                || !gameReady || gameover 
+                || !firstRoundDown || !firstRoundUp
+                || e.touches[0].clientY > $(window).innerHeight() - 50
+            ){return};
+    
+            mouseDownHandler();
+        });
+    
+        $(".gameFrame").on("touchend", function(e){
+            if($(e.target).closest(".gameFrame_pause, .IOSbacker").length != 0 
+                || paused 
+                || !gameReady || gameover 
+                || !firstRoundUp || firstRoundDown
+                || round != lastRoundPressed
+            ){return};
+    
+            mouseUpHandler();
+        });
+    };
 
     // SCORES
 
@@ -744,7 +796,14 @@ function highEnough(){
         };
     };
 
-    $(window).on('resize', function(){
+    function resizeHandler(){
+        IOSfix();
+        setVh();
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        setCanvaHeight(height);
+
         if(current_page == "landing"){
             $("body").scrollTop($(window).height());
         }if(current_page == "play"){
@@ -752,20 +811,24 @@ function highEnough(){
         }if(current_page == "scores"){
             $("body").scrollTop(2*$(window).height());
         };
+    };
 
-        minHeight = Math.round((59 / $(".gameFrame").height()) * 100);
-        if(!growIntervall && !unFillIntervall){
-            $(".gameFrame").css("background", "linear-gradient(0deg, #2F2F2F 0%, #2F2F2F "+minHeight+"%"+", #87cefa "+minHeight+"%"+", #87cefa 100%)");
+    function IOSfix(){
+        if(isIos){
+            $('.gameFrame_heart').css('bottom', '30px');
+            minHeight += 15;
+            height = minHeight;
         };
+    };
+
+    $(window).on('resize', function(){
+        resizeHandler();
     });
     
     const setVh = () => {
         const vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty('--vh', `${vh}px`);
     };
-    
-    window.addEventListener('resize', setVh);
-    setVh();
 
     // KEYS
 
@@ -790,7 +853,7 @@ function highEnough(){
     // START
 
     $("body").scrollTop($(window).height());
-    setCanvaHeight(minHeight);
+    resizeHandler();
 
     if(HErecovery){
         current_page = "play";
@@ -817,7 +880,8 @@ function highEnough(){
         for(let i = 0; i < maxhearts - 3; i++){
             let additionalHeart = $('<img src="./resources/imgs/heartFull1.svg" class="gameFrame_heart" alt="">');
             $(additionalHeart).css({
-                right: $('.gameFrame_heart').last().getStyleValue('right') + 30 + "px"
+                right: $('.gameFrame_heart').last().getStyleValue('right') + 30 + "px",
+                bottom: !isIos ? "15px" : "30px"
             });
 
             $('.gameFrame').append($(additionalHeart));
