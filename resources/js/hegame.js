@@ -712,6 +712,7 @@ function highEnough(){
                 || !gameReady || gameover 
                 || !firstRoundDown || !firstRoundUp
                 || e.clientY > $(window).innerHeight() - 50
+                || e.clientY < 60
             ){return};
     
             mouseDownHandler();
@@ -734,6 +735,7 @@ function highEnough(){
                 || !gameReady || gameover 
                 || !firstRoundDown || !firstRoundUp
                 || e.touches[0].clientY > $(window).innerHeight() - 50
+                || e.touches[0].clientY < 60
             ){return};
     
             mouseDownHandler();
