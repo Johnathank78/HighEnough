@@ -9,6 +9,8 @@ function highEnough(){
     // INIT
 
     const platform = "Web";
+    const isWebMobile = /Mobi/.test(navigator.userAgent);
+
     const isMobile = /Mobi/.test(navigator.userAgent);
     const isIos = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
@@ -277,7 +279,7 @@ function highEnough(){
         };
     };
 
-    if(platform == "Mobile"){
+    if(platform == "Web" && isWebMobile){
         $('#IOSbackerUI').css('display', "block");
 
         $(document).on("touchstart", backerMousedownHandler);
