@@ -13,6 +13,7 @@ self.addEventListener('install', event => {
                 '/HighEnough/resources/imgs/icon.png',
                 '/HighEnough/resources/imgs/smallSS.png',
                 '/HighEnough/resources/imgs/wideSS.png',
+                '/HighEnough/resources/imgs/arrow.png',
                 '/HighEnough/resources/js/hegame.js',
                 '/HighEnough/resources/js/jquery.js',
                 '/HighEnough/resources/sounds/beep.mp3',

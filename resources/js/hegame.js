@@ -13,7 +13,6 @@ function highEnough(){
     const isIos = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
     var current_page = "landing";
-
     var HErecovery = HErecovery_read();
     var scores = scores_read();
 
@@ -92,7 +91,7 @@ function highEnough(){
         HErecovery_save(HErecovery);
     };
 
-    function HErecovery_init(mode){
+    function HErecovery_init(){
         HErecovery = {
             "gameover": false,
             "combo": false,
@@ -134,6 +133,12 @@ function highEnough(){
     };
     
     // UTILITY
+
+    const DRAG_THRESHOLD = 15;
+    const MAX_PULL = 30;
+    let isBacking = false;
+    var backerY = 0;
+    var backerX = 0;
     
     function zoom(target, vec, zoomStrength, zoomSpeed, zoomCenter=[0.5, 0.5], callback=false){
         let HWRatio = $(target).height()/$(target).width();
@@ -188,20 +193,102 @@ function highEnough(){
         };
     };
 
-    if(platform == "Mobile"){
-        App.addListener('backButton', () => {
-            goBack(platform);
-        }); 
-    }else if(platform == "Web"){
-        $(".IOSbacker").on("touchstart", function(e){
-            e.preventDefault();
-        }).on("touchmove", function(e){
-            backerX = e.touches[0].clientX;
-        }).on("touchend", function(){
-            if(backerX > 50){
-                goBack(platform);
-            };
+    function backerMousedownHandler(e){
+        if(current_page == "selection" && !add_state && !timeInputShown && !rotation_state && !statOpened && !calendarState && !isExtraOut){return};
+        
+        const clientX = (e.type === "mousedown")
+        ? e.clientX
+        : e.originalEvent.touches[0].clientX;
+        
+        const clientY = (e.type === "mousedown")
+        ? e.pageY
+        : e.originalEvent.touches[0].clientY;
+    
+        backerY = clientY;
+    
+        if(clientX < DRAG_THRESHOLD){
+            isBacking = true;
+    
+            $("#IOSbackerUI").css({
+                transition: "none",
+                "-webkit-transition": "none"
+            });
+    
+            $("#backerUIbackArrow").css({
+                top: backerY - Math.floor($("#backerUIbackArrow").height()/2) + "px",
+                opacity: 1
+            });
+        };
+    };
+    
+    function backerMousemoveHandler(e){
+        if (!isBacking) return;
+        
+        const pointerX = (e.type === "mousemove")
+        ? e.pageX
+        : e.originalEvent.touches[0].pageX;
+    
+        backerX = pointerX;
+    
+        const windowH = $(window).innerHeight();
+    
+        const upperBound = Math.max(0, backerY - Math.round(windowH * 0.30)); 
+        const lowerBound = Math.min(windowH, backerY + Math.round(windowH * 0.30)); 
+        
+        const highCurveHandleX = Math.min(pointerX, MAX_PULL);
+        const highCurveHandleY = backerY;
+        const lowCurveHandleX = Math.min(pointerX, MAX_PULL);
+        const lowCurveHandleY = backerY;
+    
+        const pathData = `M 0 ${upperBound} C ${highCurveHandleX} ${highCurveHandleY} ${lowCurveHandleX} ${lowCurveHandleY} 0 ${lowerBound}`;
+    
+        $("#IOSbackerUI").css({
+            "clip-path": `path("${pathData}")`,
+            "-webkit-clip-path": `path("${pathData}")`
         });
+    };
+    
+    function backerMouseupHandler(){
+        if (!isBacking) return;
+        isBacking = false;
+        
+        $("#IOSbackerUI").css({
+            transition: "clip-path 0.3s ease, -webkit-clip-path 0.3s ease",
+            "-webkit-transition": "clip-path 0.3s ease, -webkit-clip-path 0.3s ease",
+        });
+    
+        const windowH = $(window).innerHeight();
+    
+        const upperBound = Math.max(0, backerY - Math.round(windowH * 0.40)); 
+        const lowerBound = Math.min(windowH, backerY + Math.round(windowH * 0.40)); 
+    
+        const pathData = `M 0 ${upperBound} C 0 ${backerY} 0 ${backerY} 0 ${lowerBound}`;
+    
+        $("#IOSbackerUI").css({
+            "clip-path": `path("${pathData}")`,
+            "-webkit-clip-path": `path("${pathData}")`
+        });
+    
+        $("#backerUIbackArrow").css("opacity", "0");
+    
+        if(backerX >= MAX_PULL){
+            const event = new CustomEvent('backed', { bubbles: true });
+            $('#IOSbackerUI')[0].dispatchEvent(event);
+        };
+    };
+
+    if(platform == "Mobile"){
+        $('#IOSbackerUI').css('display', "block");
+
+        $(document).on("touchstart", backerMousedownHandler);
+        $(document).on("touchmove", backerMousemoveHandler);
+        $(document).on("touchend", backerMouseupHandler);
+
+        $('#IOSbackerUI').on('backed', function(){
+            goBack(platform);
+        });
+    }else{
+        $('#IOSbackerUI').remove();
     };
 
     // NAVIGATION
@@ -713,6 +800,7 @@ function highEnough(){
                 || !firstRoundDown || !firstRoundUp
                 || e.clientY > $(window).innerHeight() - 50
                 || e.clientY < 60
+                || e.clientX < 30
             ){return};
     
             mouseDownHandler();
@@ -736,6 +824,7 @@ function highEnough(){
                 || !firstRoundDown || !firstRoundUp
                 || e.touches[0].clientY > $(window).innerHeight() - 50
                 || e.touches[0].clientY < 60
+                || e.touches[0].clientX < 30
             ){return};
     
             mouseDownHandler();
